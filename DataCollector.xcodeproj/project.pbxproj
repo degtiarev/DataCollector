@@ -8,24 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		DCB7BBF1203A5688001F1E9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BBF0203A5688001F1E9F /* AppDelegate.swift */; };
-		DCB7BBF3203A5688001F1E9F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BBF2203A5688001F1E9F /* ViewController.swift */; };
+		DCB7BBF3203A5688001F1E9F /* CollectingDataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BBF2203A5688001F1E9F /* CollectingDataVC.swift */; };
 		DCB7BBF6203A5688001F1E9F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DCB7BBF4203A5688001F1E9F /* Main.storyboard */; };
 		DCB7BBF9203A5688001F1E9F /* DataCollector.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BBF7203A5688001F1E9F /* DataCollector.xcdatamodeld */; };
 		DCB7BBFB203A5688001F1E9F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DCB7BBFA203A5688001F1E9F /* Assets.xcassets */; };
 		DCB7BBFE203A5688001F1E9F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DCB7BBFC203A5688001F1E9F /* LaunchScreen.storyboard */; };
-		DCB7BC0A203A58D1001F1E9F /* cc2650_sensortag.png in Resources */ = {isa = PBXBuildFile; fileRef = DCB7BC09203A58D1001F1E9F /* cc2650_sensortag.png */; };
+		DCB7BC0C203A6321001F1E9F /* ExportDataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BC0B203A6321001F1E9F /* ExportDataVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		DCB7BBED203A5688001F1E9F /* DataCollector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataCollector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCB7BBF0203A5688001F1E9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		DCB7BBF2203A5688001F1E9F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DCB7BBF2203A5688001F1E9F /* CollectingDataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectingDataVC.swift; sourceTree = "<group>"; };
 		DCB7BBF5203A5688001F1E9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DCB7BBF8203A5688001F1E9F /* DataCollector.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataCollector.xcdatamodel; sourceTree = "<group>"; };
 		DCB7BBFA203A5688001F1E9F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DCB7BBFD203A5688001F1E9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DCB7BBFF203A5688001F1E9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DCB7BC09203A58D1001F1E9F /* cc2650_sensortag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cc2650_sensortag.png; sourceTree = "<group>"; };
+		DCB7BC0B203A6321001F1E9F /* ExportDataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportDataVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +63,6 @@
 				DCB7BC06203A5839001F1E9F /* View */,
 				DCB7BC05203A582F001F1E9F /* Model */,
 				DCB7BBF0203A5688001F1E9F /* AppDelegate.swift */,
-				DCB7BBF2203A5688001F1E9F /* ViewController.swift */,
 				DCB7BBF4203A5688001F1E9F /* Main.storyboard */,
 				DCB7BBFA203A5688001F1E9F /* Assets.xcassets */,
 				DCB7BBFC203A5688001F1E9F /* LaunchScreen.storyboard */,
@@ -90,6 +89,8 @@
 		DCB7BC07203A5857001F1E9F /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				DCB7BBF2203A5688001F1E9F /* CollectingDataVC.swift */,
+				DCB7BC0B203A6321001F1E9F /* ExportDataVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -97,7 +98,6 @@
 		DCB7BC08203A58C5001F1E9F /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				DCB7BC09203A58D1001F1E9F /* cc2650_sensortag.png */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -164,7 +164,6 @@
 				DCB7BBFE203A5688001F1E9F /* LaunchScreen.storyboard in Resources */,
 				DCB7BBFB203A5688001F1E9F /* Assets.xcassets in Resources */,
 				DCB7BBF6203A5688001F1E9F /* Main.storyboard in Resources */,
-				DCB7BC0A203A58D1001F1E9F /* cc2650_sensortag.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,7 +175,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DCB7BBF9203A5688001F1E9F /* DataCollector.xcdatamodeld in Sources */,
-				DCB7BBF3203A5688001F1E9F /* ViewController.swift in Sources */,
+				DCB7BC0C203A6321001F1E9F /* ExportDataVC.swift in Sources */,
+				DCB7BBF3203A5688001F1E9F /* CollectingDataVC.swift in Sources */,
 				DCB7BBF1203A5688001F1E9F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

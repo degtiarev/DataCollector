@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CollectingDataVC.swift
 //  DataCollector
 //
 //  Created by Aleksei Degtiarev on 19/02/2018.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class CollectingDataVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
