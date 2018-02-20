@@ -9,6 +9,11 @@
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="HelveticaNeue.ttc">
+            <string>HelveticaNeue-MediumItalic</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--View Controller-->
         <scene sceneID="EHf-IW-A2E">
@@ -18,7 +23,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cc2650_sensortag.png" translatesAutoresizingMaskIntoConstraints="NO" id="h12-Fd-cCw">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cc2650_sensortag" translatesAutoresizingMaskIntoConstraints="NO" id="h12-Fd-cCw">
                                 <rect key="frame" x="51" y="222" width="218" height="124"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="124" id="I9X-VD-yL3"/>
@@ -26,17 +31,17 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SensorTag 2.0 Data Collector" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jMh-WY-TiU">
-                                <rect key="frame" x="80" y="93" width="161" height="82"/>
+                                <rect key="frame" x="82" y="93" width="157" height="82"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" constant="161" id="bqg-XH-ZMf"/>
                                     <constraint firstAttribute="height" constant="82" id="ctc-uY-NdB"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-MediumItalic" family="Helvetica Neue" pointSize="23"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="jMh-WY-TiU" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="870-Be-0bp"/>
                             <constraint firstItem="h12-Fd-cCw" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Apl-rm-rWv"/>
@@ -52,6 +57,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="cc2650_sensortag.png" width="200" height="205"/>
+        <image name="cc2650_sensortag" width="200" height="205"/>
     </resources>
 </document>

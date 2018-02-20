@@ -2,15 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "cc2650_sensortag.png",
+      "filename" : "record.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "record@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
+      "filename" : "record@3x.png",
       "scale" : "3x"
     }
   ],
