@@ -25,11 +25,14 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     @IBOutlet weak var stopButton: UIButton!
     
     
+    // Changing variable
+    var currentNumberOfSensors: Int = 0
+    var currentPeriod: Float = 0.0
+    
     // Define our scanning interval times
     var keepScanning = false
     let timerPauseInterval:TimeInterval = 10.0
     let timerScanInterval:TimeInterval = 2.0
-
     
     // Core Bluetooth properties
     var centralManager:CBCentralManager!
@@ -175,8 +178,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("**** SUCCESSFULLY CONNECTED TO SENSOR TAG!!!")
         
-//        temperatureLabel.font = UIFont(name: temperatureLabelFontName, size: temperatureLabelFontSizeMessage)
-//        temperatureLabel.text = "Connected"
+        sensorsStatusLabel.text = "Connected"
         
         // Now that we've successfully connected to the SensorTag, let's discover the services.
         // - NOTE:  we pass nil here to request ALL services be discovered.
@@ -247,7 +249,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     // When the specified services are discovered, the peripheral calls the peripheral:didDiscoverServices: method of its delegate object.
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if error != nil {
-            print("ERROR DISCOVERING SERVICES: \(error?.localizedDescription)")
+            print("ERROR DISCOVERING SERVICES: \(String(describing: error?.localizedDescription))")
             return
         }
         
@@ -276,7 +278,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
      */
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if error != nil {
-            print("ERROR DISCOVERING CHARACTERISTICS: \(error?.localizedDescription)")
+            print("ERROR DISCOVERING CHARACTERISTICS: \(String(describing: error?.localizedDescription))")
             return
         }
         
@@ -298,6 +300,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     // Enable IR Temperature Sensor
                     sensorTag?.writeValue(enableBytes, for: characteristic, type: .withResponse)
                 }
+                
                 
                 if characteristic.uuid == CBUUID(string: Device.HumidityDataUUID) {
                     // Enable Humidity Sensor notifications
@@ -327,7 +330,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
      */
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if error != nil {
-            print("ERROR ON UPDATING VALUE FOR CHARACTERISTIC: \(characteristic) - \(error?.localizedDescription)")
+            print("ERROR ON UPDATING VALUE FOR CHARACTERISTIC: \(characteristic) - \(String(describing: error?.localizedDescription))")
             return
         }
         
@@ -402,12 +405,16 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     @IBAction func sensorsChangedNumber(_ sender: UISlider) {
         sender.setValue(sender.value.rounded(.down), animated: true)
-        currentNumberOfSensorsLabel.text = "\( Int (sender.value))"
+        
+        let sensorsNumber = Int (sender.value)
+        currentNumberOfSensorsLabel.text = "\(sensorsNumber)"
+        currentNumberOfSensors = sensorsNumber
     }
     
     @IBAction func periodChangedNumber(_ sender: UISlider) {
-        let value = String(format: "%.1f", sender.value)
-        currentPeriodLabel.text = value
+        let period = String(format: "%.1f", sender.value)
+        currentPeriodLabel.text = period
+        currentPeriod = Float (period)!
     }
     
     
