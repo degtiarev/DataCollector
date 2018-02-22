@@ -41,15 +41,15 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             
             switch(newStatus) {
             case .connecting:
-                updateUIForConnecting()
+                сonnecting()
                 break
                 
             case .prepared:
-                updateUIForPrepared()
+                prepared()
                 break
                 
             case .recording:
-                updateUIForRecording()
+                recording()
                 break
             }
         }
@@ -71,6 +71,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     var centralManager:CBCentralManager!
     var sensorTag:CBPeripheral?
     var movementCharacteristic:CBCharacteristic?
+    var movementCharacteristicPeriod:CBCharacteristic?
     
     // This could be simplified to "SensorTag" and check if it's a substring.
     // (Probably a good idea to do that if you're using a different model of
@@ -80,7 +81,6 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        status = .connecting
         
         // Update start current value
         sensorsChangedNumber(numberOfSensorsSlider)
@@ -184,8 +184,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             if peripheralName == sensorTagName {
                 print("SENSOR TAG FOUND! ADDING NOW!!!")
                 // to save power, stop scanning for other devices
-                keepScanning = false
-                centralManager.stopScan() // MAKE WISER!!!!!!!!!!!
+//                keepScanning = false
+//                centralManager.stopScan() // MAKE WISER!!!!!!!!!!!
 //                disconnectButton.isEnabled = true
                 
                 // save a reference to the sensor tag
@@ -282,6 +282,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if error != nil {
             print("ERROR DISCOVERING SERVICES: \(String(describing: error?.localizedDescription))")
+            status = .connecting
             return
         }
         
@@ -289,7 +290,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         if let services = peripheral.services {
             for service in services {
                 print("Discovered service \(service)")
-                // If we found either the temperature or the humidity service, discover the characteristics for those services.
+                // If we found movement service, discover the characteristics for those services.
                 if (service.uuid == CBUUID(string: Device.MovementServiceUUID)){
                     peripheral.discoverCharacteristics(nil, for: service)
                 }
@@ -317,16 +318,16 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             
             
             for characteristic in characteristics {
-                // Temperature Data Characteristic
+                // Movement Data Characteristic
                 if characteristic.uuid == CBUUID(string: Device.MovementDataUUID) {
-                    // Enable the IR Temperature Sensor notifications
+                    // Enable the Movement Sensor notifications
                     movementCharacteristic = characteristic
                     sensorTag?.setNotifyValue(true, for: characteristic)
                 }
                 
-                // Temperature Configuration Characteristic
+                // Movement Configuration Characteristic
                 if characteristic.uuid == CBUUID(string: Device.MovementConfig) {
-                    // Enable IR Temperature Sensor
+                    // Enable gyroscope, accelerometer and magmetometer
                     
                     // FF - with WOM
                     // 7F - all sensors on, 03 - 16 G
@@ -336,14 +337,15 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
                 }
                 
-                // Temperature Configuration Characteristic
+                // Movement Configuration Period
                 if characteristic.uuid == CBUUID(string: Device.MovementPeriod) {
-                    // Enable IR Temperature Sensor
+                    // Set period of Movement sensor
                     //  0x0A - minimum
+                    print ("Changing period")
                     let bytes : [UInt8] = [ currentPeriod ]
                     let data = Data(bytes:bytes)
 
-
+                    movementCharacteristicPeriod = characteristic
                     sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
                 }
               
@@ -497,19 +499,13 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     // MARK - Update UI
     
     @IBAction func sensorsChangedNumber(_ sender: UISlider) {
+        // Change moving mode
         sender.setValue(sender.value.rounded(.down), animated: true)
         
         let sensorsNumber = Int (sender.value)
         currentNumberOfSensorsLabel.text = "\(sensorsNumber)"
         currentNumberOfSensors = sensorsNumber
         
-        
-        
-//        if centralManager != nil {
-//            if sensorTag != nil {
-//                centralManager.cancelPeripheralConnection(sensorTag!)
-//            }
-//        }
         status = .connecting
     }
     
@@ -518,17 +514,14 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         currentPeriodLabel.text = period
         
         currentPeriod = UInt8 ( (Float (period)!) * 100)
+    
         
-//        if centralManager != nil {
-//            if sensorTag != nil {
-//                centralManager.cancelPeripheralConnection(sensorTag!)
-//            }
-//        }
-        
-        status = .connecting
+        let bytes : [UInt8] = [ currentPeriod ]
+        let data = Data(bytes:bytes)
+        sensorTag?.writeValue(data, for: movementCharacteristicPeriod!, type: .withResponse)
     }
     
-    func updateUIForConnecting() {
+    func сonnecting() {
         recordNumberLabel.isHidden = true
         currentRecordNumberLabel.isHidden = true
         recordStatusImage.isHidden = true
@@ -548,7 +541,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
-    func updateUIForPrepared() {
+    func prepared() {
         numberOfSensorsSlider.isEnabled = true
         periodSlider.isEnabled = true
         recordNumberLabel.isHidden = false
@@ -561,9 +554,11 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
         sensorsStatusLabel.text = "Ready to record"
         sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
+        
+        centralManager.stopScan()
     }
     
-    func updateUIForRecording() {
+    func recording() {
         numberOfSensorsSlider.isEnabled = false
         periodSlider.isEnabled = false
         recordStatusImage.isHidden = false
