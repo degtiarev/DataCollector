@@ -34,19 +34,30 @@ struct Device {
     static let TemperatureDataUUID = "F000AA01-0451-4000-B000-000000000000"
     static let TemperatureConfig = "F000AA02-0451-4000-B000-000000000000"
     static let TemperaturePeriod = "F000AA03-0451-4000-B000-000000000000"
-
+    static let SensorDataIndexTempInfrared = 0
+    static let SensorDataIndexTempAmbient = 1
+    
+    
     static let HumidityServiceUUID = "F000AA20-0451-4000-B000-000000000000"
     static let HumidityDataUUID = "F000AA21-0451-4000-B000-000000000000"
     static let HumidityConfig = "F000AA22-0451-4000-B000-000000000000"
     static let HumidityPeriod = "F000AA23-0451-4000-B000-000000000000"
-    
-    static let SensorDataIndexTempInfrared = 0
-    static let SensorDataIndexTempAmbient = 1
     static let SensorDataIndexHumidityTemp = 0
     static let SensorDataIndexHumidity = 1
+    
     
     static let MovementServiceUUID = "F000AA80-0451-4000-B000-000000000000"
     static let MovementDataUUID = "F000AA81-0451-4000-B000-000000000000"
     static let MovementConfig = "F000AA82-0451-4000-B000-000000000000"
     static let MovementPeriod = "F000AA83-0451-4000-B000-000000000000"
+    static let SensorDataIndexGyroX = 0
+    static let SensorDataIndexGyroY = 1
+    static let SensorDataIndexGyroZ = 2
+    static let SensorDataIndexAccX = 3
+    static let SensorDataIndexAccY = 4
+    static let SensorDataIndexAccZ = 5
+    static let SensorDataIndexMagX = 6
+    static let SensorDataIndexMagY = 7
+    static let SensorDataIndexMagZ = 8
+    
 }

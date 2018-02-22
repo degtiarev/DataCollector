@@ -27,7 +27,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     // Changing variable
     var currentNumberOfSensors: Int = 0
-    var currentPeriod: Float = 0.0
+    var currentPeriod: UInt8 = 0
     
     // Define our scanning interval times
     var keepScanning = false
@@ -157,6 +157,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                 print("SENSOR TAG FOUND! ADDING NOW!!!")
                 // to save power, stop scanning for other devices
                 keepScanning = false
+                centralManager.stopScan() // MAKE WISER!!!!!!!!!!!
 //                disconnectButton.isEnabled = true
                 
                 // save a reference to the sensor tag
@@ -258,8 +259,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             for service in services {
                 print("Discovered service \(service)")
                 // If we found either the temperature or the humidity service, discover the characteristics for those services.
-                if (service.uuid == CBUUID(string: Device.TemperatureServiceUUID)) ||
-                    (service.uuid == CBUUID(string: Device.HumidityServiceUUID)) {
+                if (service.uuid == CBUUID(string: Device.MovementServiceUUID)){
                     peripheral.discoverCharacteristics(nil, for: service)
                 }
             }
@@ -289,29 +289,34 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             
             for characteristic in characteristics {
                 // Temperature Data Characteristic
-                if characteristic.uuid == CBUUID(string: Device.TemperatureDataUUID) {
+                if characteristic.uuid == CBUUID(string: Device.MovementDataUUID) {
                     // Enable the IR Temperature Sensor notifications
                     temperatureCharacteristic = characteristic
                     sensorTag?.setNotifyValue(true, for: characteristic)
                 }
                 
                 // Temperature Configuration Characteristic
-                if characteristic.uuid == CBUUID(string: Device.TemperatureConfig) {
+                if characteristic.uuid == CBUUID(string: Device.MovementConfig) {
                     // Enable IR Temperature Sensor
-                    sensorTag?.writeValue(enableBytes, for: characteristic, type: .withResponse)
+                    
+                    // FF - with WOM
+                    let bytes : [UInt8] = [ 0x7F, 0x03 ]
+                    let data = Data(bytes:bytes)
+                    
+                    sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
                 }
                 
-                
-                if characteristic.uuid == CBUUID(string: Device.HumidityDataUUID) {
-                    // Enable Humidity Sensor notifications
-                    humidityCharacteristic = characteristic
-                    sensorTag?.setNotifyValue(true, for: characteristic)
+                // Temperature Configuration Characteristic
+                if characteristic.uuid == CBUUID(string: Device.MovementPeriod) {
+                    // Enable IR Temperature Sensor
+                    //  0x0A - minimum
+                    let bytes : [UInt8] = [ currentPeriod ]
+                    let data = Data(bytes:bytes)
+
+
+                    sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
                 }
-                
-                if characteristic.uuid == CBUUID(string: Device.HumidityConfig) {
-                    // Enable Humidity Temperature Sensor
-                    sensorTag?.writeValue(enableBytes, for: characteristic, type: .withResponse)
-                }
+              
             }
         }
     }
@@ -340,12 +345,85 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
 //                displayTemperature(dataBytes)
             } else if characteristic.uuid == CBUUID(string: Device.HumidityDataUUID) {
 //                displayHumidity(dataBytes)
+            } else if characteristic.uuid == CBUUID(string: Device.MovementDataUUID) {
+             displayMovement(dataBytes)
             }
         }
     }
 
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - Converting data
+    func displayMovement(_ data:Data) {
+        // We'll get four bytes of data back, so we divide the byte count by two
+        // because we're creating an array that holds two 16-bit (two-byte) values
+        let dataLength = data.count / MemoryLayout<Int16>.size
+        var dataArray = [Int16](repeating: 0, count: dataLength)
+        (data as NSData).getBytes(&dataArray, length: dataLength * MemoryLayout<Int16>.size)
+        
+        //        // output values for debugging/diagnostic purposes
+        //        for i in 0 ..< dataLength {
+        //            let nextInt:UInt16 = dataArray[i]
+        //            print("next int: \(nextInt)")
+        //        }
+        
+        
+        let date = Date()
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minutes = calendar.component(.minute, from: date)
+        let seconds = calendar.component(.second, from: date)
+        let nanoseconds = calendar.component(.nanosecond, from: date)
+        
+        let currentTime = "\(hour):\(minutes):\(seconds):\(nanoseconds)"
+        
+        
+        let rawGyroX:Int16 = dataArray[Device.SensorDataIndexGyroX]
+        let GyroX = Float(rawGyroX) / (65536 / 500)
+        
+        let rawGyroY:Int16 = dataArray[Device.SensorDataIndexGyroY]
+        let GyroY = Float(rawGyroY) / (65536 / 500)
+        
+        let rawGyroZ:Int16 = dataArray[Device.SensorDataIndexGyroZ]
+        let GyroZ = Float(rawGyroZ) / (65536 / 500);
+        
+        
+        let rawAccX:Int16 = dataArray[Device.SensorDataIndexAccX]
+        let AccX = Float(rawAccX) / (32768/16)
+        
+        let rawAccY:Int16 = dataArray[Device.SensorDataIndexAccY]
+        let AccY = Float(rawAccY) / (32768/16)
+        
+        let rawAccZ:Int16 = dataArray[Device.SensorDataIndexAccZ]
+        let AccZ = Float(rawAccZ) / (32768/16)
+        
+        
+        let rawMagX:Int16 = dataArray[Device.SensorDataIndexMagX]
+        let MagX = Float(rawMagX)
+        
+        let rawMagY:Int16 = dataArray[Device.SensorDataIndexMagY]
+        let MagY = Float(rawMagY)
+        
+        let rawMagZ:Int16 = dataArray[Device.SensorDataIndexMagZ]
+        let MagZ = Float(rawMagZ)
+        
+       
+    
+        
+        print("***\(currentTime) Gyro XYZ: \(GyroX) \(GyroY) \(GyroZ) ");
+        print("***\(currentTime) Acc XYZ: \(AccX) \(AccY) \(AccZ) ");
+        print("***\(currentTime) Mag XYZ: \(MagX) \(MagY) \(MagZ) ");
+        
+    }
     
     
     
@@ -412,9 +490,10 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     }
     
     @IBAction func periodChangedNumber(_ sender: UISlider) {
-        let period = String(format: "%.1f", sender.value)
+        let period = String(format: "%.1f", sender.value )
         currentPeriodLabel.text = period
-        currentPeriod = Float (period)!
+        
+        currentPeriod = UInt8 ( (Float (period)!) * 100)
     }
     
     
