@@ -258,7 +258,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="5" translatesAutoresizingMaskIntoConstraints="NO" id="gsN-OV-Vpx">
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="gsN-OV-Vpx">
                                 <rect key="frame" x="28" y="114" width="262" height="31"/>
                                 <connections>
                                     <action selector="sensorsChangedNumber:" destination="P6d-qE-rpN" eventType="valueChanged" id="zIG-Sh-DJA"/>
@@ -320,7 +320,7 @@
                                     <action selector="periodChangedNumber:" destination="P6d-qE-rpN" eventType="valueChanged" id="Pco-4q-7Ku"/>
                                 </connections>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IEF-zL-LAg">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IEF-zL-LAg">
                                 <rect key="frame" x="296" y="122" width="8" height="14.5"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="8" id="17c-vr-Jxm"/>
@@ -425,6 +425,7 @@
                         <outlet property="currentRecordNumberLabel" destination="WM5-K0-MPM" id="bRe-Lw-6KW"/>
                         <outlet property="numberOfSensorsSlider" destination="gsN-OV-Vpx" id="e9r-z6-vm2"/>
                         <outlet property="periodSlider" destination="CiE-hg-cmP" id="v7u-2U-nf3"/>
+                        <outlet property="recordNumberLabel" destination="XYz-Xq-pQb" id="wu2-KU-1Gj"/>
                         <outlet property="recordStatusImage" destination="nBf-or-H5N" id="WP7-IX-qaW"/>
                         <outlet property="recordTimeLabel" destination="fIl-Sz-r7Z" id="vw6-tC-P86"/>
                         <outlet property="sensorsStatusImage" destination="xMO-xP-euQ" id="AC1-D1-CMT"/>

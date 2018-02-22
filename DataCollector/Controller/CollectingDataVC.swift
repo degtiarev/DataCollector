@@ -19,11 +19,44 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     @IBOutlet weak var currentPeriodLabel: UILabel!
     @IBOutlet weak var periodSlider: UISlider!
     @IBOutlet weak var currentRecordNumberLabel: UILabel!
+    @IBOutlet weak var recordNumberLabel: UILabel!
     @IBOutlet weak var recordTimeLabel: UILabel!
     @IBOutlet weak var recordStatusImage: UIImageView!
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var stopButton: UIButton!
     
+    
+    
+    
+    
+    // Statuses
+    enum Status {
+        case connecting
+        case prepared
+        case recording
+    }
+    
+    var status: Status = Status.connecting {
+        willSet(newStatus) {
+            
+            switch(newStatus) {
+            case .connecting:
+                updateUIForConnecting()
+                break
+                
+            case .prepared:
+                updateUIForPrepared()
+                break
+                
+            case .recording:
+                updateUIForRecording()
+                break
+            }
+        }
+        didSet {
+            
+        }
+    }
     
     // Changing variable
     var currentNumberOfSensors: Int = 0
@@ -37,8 +70,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     // Core Bluetooth properties
     var centralManager:CBCentralManager!
     var sensorTag:CBPeripheral?
-    var temperatureCharacteristic:CBCharacteristic?
-    var humidityCharacteristic:CBCharacteristic?
+    var movementCharacteristic:CBCharacteristic?
     
     // This could be simplified to "SensorTag" and check if it's a substring.
     // (Probably a good idea to do that if you're using a different model of
@@ -48,21 +80,20 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        status = .connecting
         
         // Update start current value
         sensorsChangedNumber(numberOfSensorsSlider)
         periodChangedNumber(periodSlider)
         
         
-        
         // Create our CBCentral Manager
         // delegate: The delegate that will receive central role events. Typically self.
         // queue:    The dispatch queue to use to dispatch the central role events.
         //           If the value is nil, the central manager dispatches central role events using the main queue.
+        
         centralManager = CBCentralManager(delegate: self, queue: nil)
         
-        // configure initial UI
-        sensorsStatusLabel.text = "Searching"
     }
     
     
@@ -78,11 +109,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
-    
-    
-    
-    
-    
+
     
     
     // MARK: - CBCentralManagerDelegate methods
@@ -109,7 +136,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             
             print(message)
             keepScanning = true
-            _ = Timer(timeInterval: timerScanInterval, target: self, selector: #selector(pauseScan), userInfo: nil, repeats: false)
+//            needs to be implemented means to save energy
+//            _ = Timer(timeInterval: timerScanInterval, target: self, selector: #selector(pauseScan), userInfo: nil, repeats: false)
             
             // Initiate Scan for Peripherals
             //Option 1: Scan for all devices
@@ -179,7 +207,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("**** SUCCESSFULLY CONNECTED TO SENSOR TAG!!!")
         
-        sensorsStatusLabel.text = "Connected"
+        status = .prepared
         
         // Now that we've successfully connected to the SensorTag, let's discover the services.
         // - NOTE:  we pass nil here to request ALL services be discovered.
@@ -212,6 +240,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
      */
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("**** DISCONNECTED FROM SENSOR TAG!!!")
+        status = .connecting
 //        lastTemperature = 0
 //        updateBackgroundImageForTemperature(lastTemperature)
 //        circleView.isHidden = true
@@ -223,6 +252,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             print("****** DISCONNECTION DETAILS: \(error!.localizedDescription)")
         }
         sensorTag = nil
+        
+       
     }
     
     
@@ -283,15 +314,13 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
         
         if let characteristics = service.characteristics {
-            let enableValue:UInt8 = 1
-            let enableBytes = Data(bytes: [enableValue])
             
             
             for characteristic in characteristics {
                 // Temperature Data Characteristic
                 if characteristic.uuid == CBUUID(string: Device.MovementDataUUID) {
                     // Enable the IR Temperature Sensor notifications
-                    temperatureCharacteristic = characteristic
+                    movementCharacteristic = characteristic
                     sensorTag?.setNotifyValue(true, for: characteristic)
                 }
                 
@@ -300,6 +329,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     // Enable IR Temperature Sensor
                     
                     // FF - with WOM
+                    // 7F - all sensors on, 03 - 16 G
                     let bytes : [UInt8] = [ 0x7F, 0x03 ]
                     let data = Data(bytes:bytes)
                     
@@ -341,16 +371,12 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
         // extract the data from the characteristic's value property and display the value based on the characteristic type
         if let dataBytes = characteristic.value {
-            if characteristic.uuid == CBUUID(string: Device.TemperatureDataUUID) {
-//                displayTemperature(dataBytes)
-            } else if characteristic.uuid == CBUUID(string: Device.HumidityDataUUID) {
-//                displayHumidity(dataBytes)
-            } else if characteristic.uuid == CBUUID(string: Device.MovementDataUUID) {
-             displayMovement(dataBytes)
+            if characteristic.uuid == CBUUID(string: Device.MovementDataUUID) {
+                displayMovement(dataBytes)
             }
         }
     }
-
+    
     
     
     
@@ -376,7 +402,6 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         //            print("next int: \(nextInt)")
         //        }
         
-        
         let date = Date()
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: date)
@@ -386,39 +411,30 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
         let currentTime = "\(hour):\(minutes):\(seconds):\(nanoseconds)"
         
-        
         let rawGyroX:Int16 = dataArray[Device.SensorDataIndexGyroX]
         let GyroX = Float(rawGyroX) / (65536 / 500)
-        
         let rawGyroY:Int16 = dataArray[Device.SensorDataIndexGyroY]
         let GyroY = Float(rawGyroY) / (65536 / 500)
-        
         let rawGyroZ:Int16 = dataArray[Device.SensorDataIndexGyroZ]
         let GyroZ = Float(rawGyroZ) / (65536 / 500);
         
         
         let rawAccX:Int16 = dataArray[Device.SensorDataIndexAccX]
         let AccX = Float(rawAccX) / (32768/16)
-        
         let rawAccY:Int16 = dataArray[Device.SensorDataIndexAccY]
         let AccY = Float(rawAccY) / (32768/16)
-        
         let rawAccZ:Int16 = dataArray[Device.SensorDataIndexAccZ]
         let AccZ = Float(rawAccZ) / (32768/16)
         
         
         let rawMagX:Int16 = dataArray[Device.SensorDataIndexMagX]
         let MagX = Float(rawMagX)
-        
         let rawMagY:Int16 = dataArray[Device.SensorDataIndexMagY]
         let MagY = Float(rawMagY)
-        
         let rawMagZ:Int16 = dataArray[Device.SensorDataIndexMagZ]
         let MagZ = Float(rawMagZ)
         
        
-    
-        
         print("***\(currentTime) Gyro XYZ: \(GyroX) \(GyroY) \(GyroZ) ");
         print("***\(currentTime) Acc XYZ: \(AccX) \(AccY) \(AccZ) ");
         print("***\(currentTime) Mag XYZ: \(MagX) \(MagY) \(MagZ) ");
@@ -431,36 +447,35 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
+
     
     
     
     
     
     
-    
-    
-    // MARK: - Bluetooth scanning
-    
-    @objc func pauseScan() {
-        // Scanning uses up battery on phone, so pause the scan process for the designated interval.
-        print("*** PAUSING SCAN...")
-        _ = Timer(timeInterval: timerPauseInterval, target: self, selector: #selector(resumeScan), userInfo: nil, repeats: false)
-        centralManager.stopScan()
-//        disconnectButton.isEnabled = true
-    }
-    
-    @objc func resumeScan() {
-        if keepScanning {
-            // Start scanning again...
-            print("*** RESUMING SCAN!")
-//            disconnectButton.isEnabled = false
-            sensorsStatusLabel.text = "Searching"
-            _ = Timer(timeInterval: timerScanInterval, target: self, selector: #selector(pauseScan), userInfo: nil, repeats: false)
-            centralManager.scanForPeripherals(withServices: nil, options: nil)
-        } else {
-//            disconnectButton.isEnabled = true
-        }
-    }
+//    // MARK: - Bluetooth scanning
+//    
+//    @objc func pauseScan() {
+//        // Scanning uses up battery on phone, so pause the scan process for the designated interval.
+//        print("*** PAUSING SCAN...")
+//        _ = Timer(timeInterval: timerPauseInterval, target: self, selector: #selector(resumeScan), userInfo: nil, repeats: false)
+//        centralManager.stopScan()
+////        disconnectButton.isEnabled = true
+//    }
+//    
+//    @objc func resumeScan() {
+//        if keepScanning {
+//            // Start scanning again...
+//            print("*** RESUMING SCAN!")
+////            disconnectButton.isEnabled = false
+//            sensorsStatusLabel.text = "Searching"
+//            _ = Timer(timeInterval: timerScanInterval, target: self, selector: #selector(pauseScan), userInfo: nil, repeats: false)
+//            centralManager.scanForPeripherals(withServices: nil, options: nil)
+//        } else {
+////            disconnectButton.isEnabled = true
+//        }
+//    }
     
     
     
@@ -487,6 +502,15 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let sensorsNumber = Int (sender.value)
         currentNumberOfSensorsLabel.text = "\(sensorsNumber)"
         currentNumberOfSensors = sensorsNumber
+        
+        
+        
+//        if centralManager != nil {
+//            if sensorTag != nil {
+//                centralManager.cancelPeripheralConnection(sensorTag!)
+//            }
+//        }
+        status = .connecting
     }
     
     @IBAction func periodChangedNumber(_ sender: UISlider) {
@@ -494,8 +518,61 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         currentPeriodLabel.text = period
         
         currentPeriod = UInt8 ( (Float (period)!) * 100)
+        
+//        if centralManager != nil {
+//            if sensorTag != nil {
+//                centralManager.cancelPeripheralConnection(sensorTag!)
+//            }
+//        }
+        
+        status = .connecting
     }
     
+    func updateUIForConnecting() {
+        recordNumberLabel.isHidden = true
+        currentRecordNumberLabel.isHidden = true
+        recordStatusImage.isHidden = true
+        recordTimeLabel.isHidden = true
+        startButton.isHidden = true
+        stopButton.isHidden = true
+        
+        sensorsStatusLabel.text = "Searching..."
+        sensorsStatusImage.image = #imageLiteral(resourceName: "error")
+        
+        if centralManager != nil {
+            if sensorTag != nil {
+                centralManager.cancelPeripheralConnection(sensorTag!)
+            }
+            sensorTag = nil
+            centralManager.scanForPeripherals(withServices: nil, options: nil)
+        }
+    }
+    
+    func updateUIForPrepared() {
+        numberOfSensorsSlider.isEnabled = true
+        periodSlider.isEnabled = true
+        recordNumberLabel.isHidden = false
+        currentRecordNumberLabel.isHidden = true
+        recordStatusImage.isHidden = true
+        recordTimeLabel.isHidden = false
+        recordTimeLabel.text = "00:00:000"
+        startButton.isHidden = false
+        stopButton.isHidden = false
+        
+        sensorsStatusLabel.text = "Ready to record"
+        sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
+    }
+    
+    func updateUIForRecording() {
+        numberOfSensorsSlider.isEnabled = false
+        periodSlider.isEnabled = false
+        recordStatusImage.isHidden = false
+        currentRecordNumberLabel.isHidden = false
+        currentRecordNumberLabel.text = "0" // update from DB
+        
+        sensorsStatusLabel.text = "Recording..."
+        sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
+    }
     
     
 }
