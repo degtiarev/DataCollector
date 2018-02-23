@@ -73,6 +73,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     var movementCharacteristic:CBCharacteristic?
     var movementCharacteristicPeriod:CBCharacteristic?
     
+
+    
     // This could be simplified to "SensorTag" and check if it's a substring.
     // (Probably a good idea to do that if you're using a different model of
     // the SensorTag, or if you don't know what model it is...)
@@ -291,7 +293,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             for service in services {
                 print("Discovered service \(service)")
                 // If we found movement service, discover the characteristics for those services.
-                if (service.uuid == CBUUID(string: Device.MovementServiceUUID)){
+                if (service.uuid == CBUUID(string: Device.MovementServiceUUID)) ||
+                    (service.uuid == CBUUID(string: Device.IOServiceUUID)) {
                     peripheral.discoverCharacteristics(nil, for: service)
                 }
             }
@@ -346,6 +349,26 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     let data = Data(bytes:bytes)
 
                     movementCharacteristicPeriod = characteristic
+                    sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
+                }
+                
+                // IOService Configuration Characteristic
+                if characteristic.uuid == CBUUID(string: Device.IOServiceConfig) {
+                    // Change mode to remote
+                    
+                    let bytes : [UInt8] = [ 0x01 ]
+                    let data = Data(bytes:bytes)
+                    
+                    sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
+                }
+                
+                // IO service Data (enable LEDS)
+                if characteristic.uuid == CBUUID(string: Device.IOServiceData) {
+                    // Enable LED 1 - red, 2 - green, 3 - red+green
+
+                    let bytes : [UInt8] = [ 0x01 ]
+                    let data = Data(bytes:bytes)
+                    
                     sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
                 }
               
