@@ -61,9 +61,9 @@ struct Device {
     static let SensorDataIndexMagZ = 8
     
     static let IOServiceUUID = "F000AA64-0451-4000-B000-000000000000"
-    static let IOServiceData = "F000AA65-0451-4000-B000-000000000000"
+    static let IOServiceDataUUID = "F000AA65-0451-4000-B000-000000000000"
     static let IOServiceConfig = "F000AA66-0451-4000-B000-000000000000"
     
     static let SimpleKeyUUID = "0000FFE0-0000-1000-8000-00805F9B34FB"
-    
+    static let SimpleKeyDataUUID = "0000FFE1-0000-1000-8000-00805F9B34FB"
 }

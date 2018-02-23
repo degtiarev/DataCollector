@@ -72,7 +72,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     var sensorTag:CBPeripheral?
     var movementCharacteristic:CBCharacteristic?
     var movementCharacteristicPeriod:CBCharacteristic?
-    
+    var buttonPressedCharacteristic:CBCharacteristic?
 
     
     // This could be simplified to "SensorTag" and check if it's a substring.
@@ -294,7 +294,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                 print("Discovered service \(service)")
                 // If we found movement service, discover the characteristics for those services.
                 if (service.uuid == CBUUID(string: Device.MovementServiceUUID)) ||
-                    (service.uuid == CBUUID(string: Device.IOServiceUUID)) {
+                    (service.uuid == CBUUID(string: Device.IOServiceUUID)) || (service.uuid == CBUUID(string: Device.SimpleKeyUUID)) {
                     peripheral.discoverCharacteristics(nil, for: service)
                 }
             }
@@ -318,7 +318,6 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
         
         if let characteristics = service.characteristics {
-            
             
             for characteristic in characteristics {
                 // Movement Data Characteristic
@@ -352,7 +351,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
                 }
                 
-                // IOService Configuration Characteristic
+                // IO Service Configuration Characteristic
                 if characteristic.uuid == CBUUID(string: Device.IOServiceConfig) {
                     // Change mode to remote
                     
@@ -362,8 +361,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
                 }
                 
-                // IO service Data (enable LEDS)
-                if characteristic.uuid == CBUUID(string: Device.IOServiceData) {
+                // IO Service Data (enable LEDS)
+                if characteristic.uuid == CBUUID(string: Device.IOServiceDataUUID) {
                     // Enable LED 1 - red, 2 - green, 3 - red+green
 
                     let bytes : [UInt8] = [ 0x01 ]
@@ -371,7 +370,15 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     
                     sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
                 }
-              
+                
+                // SimpleKey Data Characteristic
+                if characteristic.uuid == CBUUID(string: Device.SimpleKeyDataUUID) {
+                    // Enable the Movement Sensor notifications
+                    buttonPressedCharacteristic = characteristic
+                    sensorTag?.setNotifyValue(true, for: characteristic)
+                }
+                
+                
             }
         }
     }
@@ -398,6 +405,10 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         if let dataBytes = characteristic.value {
             if characteristic.uuid == CBUUID(string: Device.MovementDataUUID) {
                 displayMovement(dataBytes)
+            }
+            
+            else if  characteristic.uuid == CBUUID(string: Device.SimpleKeyDataUUID) {
+                extractData(dataBytes)
             }
         }
     }
@@ -466,9 +477,14 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
     }
     
-    
-    
-    
+    func extractData(_ data:Data){
+        
+        let value = data.withUnsafeBytes { (ptr: UnsafePointer<Int>) -> Int in
+            return ptr.pointee
+        }
+        // 0 - nothing, 1 - user button, 2 - power button, 3 - user button + power button
+        print(value)
+    }
     
     
     
@@ -537,7 +553,6 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         currentPeriodLabel.text = period
         
         currentPeriod = UInt8 ( (Float (period)!) * 100)
-    
         
         let bytes : [UInt8] = [ currentPeriod ]
         let data = Data(bytes:bytes)
