@@ -57,7 +57,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
-    var currentSensor: UInt8 = 1
+    var currentSensorLED: UInt8 = 1
+    var sensorTagsWithLEDS = [String:Int]()
     
     // Changing variable
     var currentNumberOfSensors: Int = 0
@@ -195,9 +196,14 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                 
                 sensorTags[peripheral.identifier.uuidString]  = peripheral
                 sensorTags[peripheral.identifier.uuidString]?.delegate = self
+                sensorTagsWithLEDS[peripheral.identifier.uuidString] = sensorTagsWithLEDS.count + 1
                 
                 // Request a connection to the peripheral
                 centralManager.connect(sensorTags[peripheral.identifier.uuidString]!, options: nil)
+                
+                if sensorTags.count == currentNumberOfSensors {
+                    status = .prepared
+                }
             }
         }
     }
@@ -256,7 +262,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             print("****** DISCONNECTION DETAILS: \(error!.localizedDescription)")
         }
         sensorTags[peripheral.identifier.uuidString] = nil
-        
+        sensorTagsWithLEDS[peripheral.identifier.uuidString] = nil
        
     }
     
@@ -368,13 +374,13 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     // Enable LED 1 - red, 2 - green, 3 - red+green
 
                     
-                    let bytes : [UInt8] = [ currentSensor ]
+                    let bytes : [UInt8] = [ currentSensorLED ]
                     let data = Data(bytes:bytes)
                     sensorTags[peripheral.identifier.uuidString]?.writeValue(data, for: characteristic, type: .withResponse)
                     
-                    currentSensor += 1
-                    if currentSensor == 4 {
-                        currentSensor = 1
+                    currentSensorLED += 1
+                    if currentSensorLED == 4 {
+                        currentSensorLED = 1
                     }
                     
 
@@ -413,7 +419,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         // extract the data from the characteristic's value property and display the value based on the characteristic type
         if let dataBytes = characteristic.value {
             if characteristic.uuid == CBUUID(string: Device.MovementDataUUID) {
-                displayMovement(dataBytes)
+                displayMovement(dataBytes, uiid: peripheral.identifier.uuidString)
             }
             
             else if  characteristic.uuid == CBUUID(string: Device.SimpleKeyDataUUID) {
@@ -434,7 +440,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     // MARK: - Converting data
-    func displayMovement(_ data:Data) {
+    func displayMovement(_ data:Data, uiid: String) {
         // We'll get four bytes of data back, so we divide the byte count by two
         // because we're creating an array that holds two 16-bit (two-byte) values
         let dataLength = data.count / MemoryLayout<Int16>.size
@@ -479,12 +485,13 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let rawMagZ:Int16 = dataArray[Device.SensorDataIndexMagZ]
         let MagZ = Float(rawMagZ)
         
-       
+        print("***\(uiid) - LED \(sensorTagsWithLEDS[uiid] ?? 255)");
         print("***\(currentTime) Gyro XYZ: \(GyroX) \(GyroY) \(GyroZ) ");
         print("***\(currentTime) Acc XYZ: \(AccX) \(AccY) \(AccZ) ");
         print("***\(currentTime) Mag XYZ: \(MagX) \(MagY) \(MagZ) ");
+        print("*****************************************************");
         
-        status = .prepared
+        
         
     }
     
@@ -565,14 +572,15 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
         currentPeriod = UInt8 ( (Float (period)!) * 100)
         
+        // Update period of all sensors
         let bytes : [UInt8] = [ currentPeriod ]
         let data = Data(bytes:bytes)
-        
         if sensorTags.count != 0 {
             for (key,_) in sensorTags {
                 sensorTags[key]?.writeValue(data, for: (movementCharacteristicPeriod[key] as? CBCharacteristic)!, type: .withResponse)
             }
         }
+        
     }
     
     func сonnecting() {
@@ -586,6 +594,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         sensorsStatusLabel.text = "Searching..."
         sensorsStatusImage.image = #imageLiteral(resourceName: "error")
         
+        // If already connected sensor/sensors - reconect them
         if centralManager != nil {
             if sensorTags.count != 0 {
                 sensorTags.forEach({ (key, value) in
@@ -593,9 +602,11 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                 })
             }
             sensorTags.removeAll()
+            sensorTagsWithLEDS.removeAll()
             centralManager.scanForPeripherals(withServices: nil, options: nil)
         }
-        
+    
+        currentSensorLED = 1
     }
     
     func prepared() {
