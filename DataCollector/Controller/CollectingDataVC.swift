@@ -25,9 +25,6 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var stopButton: UIButton!
     
-    
-    
-    
     // Statuses
     enum Status {
         case connecting
@@ -57,6 +54,12 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
+    
+    // Record stopwatch
+    var startTime = TimeInterval()
+    var timer = Timer()
+    
+    // For LEDs
     var currentSensorLED: UInt8 = 1
     var sensorTagsWithLEDS = [String:Int]()
     
@@ -107,14 +110,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
-    
-    
-    
-    
-    
-    
 
-    
     
     // MARK: - CBCentralManagerDelegate methods
     
@@ -361,8 +357,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                 
                 // IO Service Configuration Characteristic
                 if characteristic.uuid == CBUUID(string: Device.IOServiceConfig) {
-                    // Change mode to remote
                     
+                    // Change mode to remote
                     let bytes : [UInt8] = [ 0x01 ]
                     let data = Data(bytes:bytes)
                     
@@ -371,9 +367,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                 
                 // IO Service Data (enable LEDS)
                 if characteristic.uuid == CBUUID(string: Device.IOServiceDataUUID) {
-                    // Enable LED 1 - red, 2 - green, 3 - red+green
-
                     
+                    // Enable LED 1 - red, 2 - green, 3 - red+green
                     let bytes : [UInt8] = [ currentSensorLED ]
                     let data = Data(bytes:bytes)
                     sensorTags[peripheral.identifier.uuidString]?.writeValue(data, for: characteristic, type: .withResponse)
@@ -491,8 +486,6 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         print("***\(currentTime) Mag XYZ: \(MagX) \(MagY) \(MagZ) ");
         print("*****************************************************");
         
-        
-        
     }
     
     func extractData(_ data:Data){
@@ -544,15 +537,6 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
     // MARK - Action controlls
     
     @IBAction func sensorsChangedNumber(_ sender: UISlider) {
@@ -585,14 +569,54 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     @IBAction func StartButtonpressed(_ sender: Any) {
         status = .recording
+        
+        timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+        startTime = NSDate.timeIntervalSinceReferenceDate
     }
     
     
     @IBAction func stopButtonPressed(_ sender: Any) {
         status = .prepared
+         timer.invalidate()
     }
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    // MARK - Record stopwatch
+    
+    //Update Time Function
+    @objc func updateTime() {
+        let currentTime = NSDate.timeIntervalSinceReferenceDate
+        
+        //Find the difference between current time and start time.
+        var elapsedTime: TimeInterval = currentTime - startTime
+        
+        //calculate the minutes in elapsed time.
+        let minutes = UInt8(elapsedTime / 60.0)
+        elapsedTime -= (TimeInterval(minutes) * 60)
+        
+        //calculate the seconds in elapsed time.
+        let seconds = UInt8(elapsedTime)
+        elapsedTime -= TimeInterval(seconds)
+        
+        //find out the fraction of milliseconds to be displayed.
+        let fraction = UInt16(elapsedTime * 1000)
+        
+        //add the leading zero for minutes, seconds and millseconds and store them as string constants
+        let strMinutes = String(format: "%02d", minutes)
+        let strSeconds = String(format: "%02d", seconds)
+        let strFraction = String(format: "%03d", fraction)
+        
+        //concatenate minuts, seconds and milliseconds as assign it to the UILabel
+        recordTimeLabel.text = "\(strMinutes):\(strSeconds):\(strFraction)"
+    }
     
     
     
@@ -655,7 +679,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         startButton.isEnabled = false
         
         sensorsStatusLabel.text = "Recording..."
-        sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
+        sensorsStatusImage.image = #imageLiteral(resourceName: "record")
     }
     
     
