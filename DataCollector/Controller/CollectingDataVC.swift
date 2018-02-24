@@ -100,6 +100,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         //           If the value is nil, the central manager dispatches central role events using the main queue.
         
         centralManager = CBCentralManager(delegate: self, queue: nil)
+        fillTestData()
         
     }
     
@@ -683,5 +684,112 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     }
     
     
+    
+    
+    
+    // Filling data for test
+    func fillTestData(){
+        let sensor1 = Sensor(context: context)
+        sensor1.id = 1
+        let sensor2 = Sensor(context: context)
+        sensor2.id = 2
+        let sensor3 = Sensor(context: context)
+        sensor3.id = 3
+        
+        
+        let characteristicName1 = CharacteristicName (context:context)
+        characteristicName1.name = "Gyro"
+        let characteristicName2 = CharacteristicName (context:context)
+        characteristicName2.name = "Acc"
+        let characteristicName3 = CharacteristicName (context:context)
+        characteristicName3.name = "Mag"
+        
+        
+        let characteristic1 = Characteristic (context:context)
+        characteristic1.x = 0.1
+        characteristic1.y = 0.1
+        characteristic1.z = 0.1
+        characteristic1.toCharacteristicName = characteristicName1
+        let characteristic2 = Characteristic (context:context)
+        characteristic2.x = 0.2
+        characteristic2.y = 0.2
+        characteristic2.z = 0.2
+        characteristic2.toCharacteristicName = characteristicName1
+        let characteristic3 = Characteristic (context:context)
+        characteristic3.x = 0.3
+        characteristic3.y = 0.3
+        characteristic3.z = 0.3
+        characteristic3.toCharacteristicName = characteristicName1
+        let characteristic1a = Characteristic (context:context)
+        characteristic1a.x = 0.1
+        characteristic1a.y = 0.1
+        characteristic1a.z = 0.1
+        characteristic1a.toCharacteristicName = characteristicName2
+        let characteristic2a = Characteristic (context:context)
+        characteristic2a.x = 0.2
+        characteristic2a.y = 0.2
+        characteristic2a.z = 0.2
+        characteristic2a.toCharacteristicName = characteristicName2
+        let characteristic3a = Characteristic (context:context)
+        characteristic3a.x = 0.3
+        characteristic3a.y = 0.3
+        characteristic3a.z = 0.3
+        characteristic3a.toCharacteristicName = characteristicName2
+        let characteristic1b = Characteristic (context:context)
+        characteristic1b.x = 0.1
+        characteristic1b.y = 0.1
+        characteristic1b.z = 0.1
+        characteristic1b.toCharacteristicName = characteristicName3
+        let characteristic2b = Characteristic (context:context)
+        characteristic2b.x = 0.2
+        characteristic2b.y = 0.2
+        characteristic2b.z = 0.2
+        characteristic2b.toCharacteristicName = characteristicName3
+        let characteristic3b = Characteristic (context:context)
+        characteristic3b.x = 0.3
+        characteristic3b.y = 0.3
+        characteristic3b.z = 0.3
+        characteristic3b.toCharacteristicName = characteristicName3
+        
+        
+        let sensorData1 = SensorData(context: context)
+        sensorData1.timeStamp = NSDate()
+        sensorData1.toSensor = sensor1
+        sensorData1.addToToCharacteristic(characteristic1)
+        sensorData1.addToToCharacteristic(characteristic2)
+        sensorData1.addToToCharacteristic(characteristic3)
+        
+        let sensorData2 = SensorData(context: context)
+        sensorData2.timeStamp = NSDate()
+        sensorData2.toSensor = sensor2
+        sensorData2.addToToCharacteristic(characteristic1a)
+        sensorData2.addToToCharacteristic(characteristic2a)
+        sensorData2.addToToCharacteristic(characteristic3a)
+        
+        let sensorData3 = SensorData(context: context)
+        sensorData3.timeStamp = NSDate()
+        sensorData3.toSensor = sensor3
+        sensorData3.addToToCharacteristic(characteristic1b)
+        sensorData3.addToToCharacteristic(characteristic2b)
+        sensorData3.addToToCharacteristic(characteristic3b)
+        
+        
+        let session1 = Session(context: context)
+        session1.id = 1
+        session1.duration = "00:10"
+        session1.addToToSensorData(sensorData1)
+        session1.addToToSensorData(sensorData2)
+        session1.addToToSensorData(sensorData3)
+        
+        let session2 = Session(context: context)
+        session2.id = 2
+        session2.duration = "00:15"
+        session2.addToToSensorData(sensorData1)
+        session2.addToToSensorData(sensorData2)
+        session2.addToToSensorData(sensorData3)
+        
+    
+        ad.saveContext()
+    }
 }
 

@@ -22,7 +22,7 @@
                                 <rect key="frame" x="0.0" y="64" width="320" height="455"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="64" id="78b-m5-Y0c">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ItemCell" rowHeight="64" id="78b-m5-Y0c" customClass="ItemCell" customModule="DataCollector" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="320" height="64"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="78b-m5-Y0c" id="slN-qc-e4P">
@@ -75,6 +75,9 @@
                                                                 <constraint firstAttribute="height" constant="34" id="BCz-it-BsM"/>
                                                                 <constraint firstAttribute="width" constant="32" id="fie-Gr-MQv"/>
                                                             </constraints>
+                                                            <connections>
+                                                                <action selector="deletePressedButton:" destination="78b-m5-Y0c" eventType="touchUpInside" id="ucI-L7-TQT"/>
+                                                            </connections>
                                                         </button>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Period:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FCR-cg-dOS">
                                                             <rect key="frame" x="51" y="28" width="57" height="21"/>
@@ -148,6 +151,13 @@
                                                 <constraint firstAttribute="trailing" secondItem="XcX-A5-Ks1" secondAttribute="trailing" constant="5" id="xsj-Fm-dXV"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="dateSessionLabel" destination="Q8L-mP-7fh" id="zgm-69-ZQF"/>
+                                            <outlet property="durationLabel" destination="aYZ-Kt-dBT" id="qSm-H1-JFc"/>
+                                            <outlet property="idSessionLabel" destination="xyL-Xr-NRN" id="YYA-yG-QgY"/>
+                                            <outlet property="periodLabel" destination="slI-E4-avu" id="R1K-D1-za3"/>
+                                            <outlet property="sensorsLabel" destination="XNQ-qc-R32" id="pWJ-SG-J5A"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
