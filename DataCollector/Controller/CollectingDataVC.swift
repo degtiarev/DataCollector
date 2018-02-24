@@ -28,7 +28,6 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
-    
     // Statuses
     enum Status {
         case connecting
@@ -58,6 +57,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
+    var currentSensor: UInt8 = 1
+    
     // Changing variable
     var currentNumberOfSensors: Int = 0
     var currentPeriod: UInt8 = 0
@@ -69,10 +70,10 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     // Core Bluetooth properties
     var centralManager:CBCentralManager!
-    var sensorTag:CBPeripheral?
-    var movementCharacteristic:CBCharacteristic?
-    var movementCharacteristicPeriod:CBCharacteristic?
-    var buttonPressedCharacteristic:CBCharacteristic?
+    var sensorTags = [String:CBPeripheral]()
+    var movementCharacteristics = [String:CBCharacteristic?]()
+    var movementCharacteristicPeriod = [String:CBCharacteristic?]()
+    var buttonPressedCharacteristic = [String:CBCharacteristic?]()
 
     
     // This could be simplified to "SensorTag" and check if it's a substring.
@@ -191,11 +192,12 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
 //                disconnectButton.isEnabled = true
                 
                 // save a reference to the sensor tag
-                sensorTag = peripheral
-                sensorTag!.delegate = self
+                
+                sensorTags[peripheral.identifier.uuidString]  = peripheral
+                sensorTags[peripheral.identifier.uuidString]?.delegate = self
                 
                 // Request a connection to the peripheral
-                centralManager.connect(sensorTag!, options: nil)
+                centralManager.connect(sensorTags[peripheral.identifier.uuidString]!, options: nil)
             }
         }
     }
@@ -209,7 +211,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("**** SUCCESSFULLY CONNECTED TO SENSOR TAG!!!")
         
-        status = .prepared
+        
         
         // Now that we've successfully connected to the SensorTag, let's discover the services.
         // - NOTE:  we pass nil here to request ALL services be discovered.
@@ -253,7 +255,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         if error != nil {
             print("****** DISCONNECTION DETAILS: \(error!.localizedDescription)")
         }
-        sensorTag = nil
+        sensorTags[peripheral.identifier.uuidString] = nil
         
        
     }
@@ -323,8 +325,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                 // Movement Data Characteristic
                 if characteristic.uuid == CBUUID(string: Device.MovementDataUUID) {
                     // Enable the Movement Sensor notifications
-                    movementCharacteristic = characteristic
-                    sensorTag?.setNotifyValue(true, for: characteristic)
+                    movementCharacteristics[peripheral.identifier.uuidString] = characteristic
+                    sensorTags[peripheral.identifier.uuidString]?.setNotifyValue(true, for: characteristic)
                 }
                 
                 // Movement Configuration Characteristic
@@ -336,7 +338,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     let bytes : [UInt8] = [ 0x7F, 0x03 ]
                     let data = Data(bytes:bytes)
                     
-                    sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
+                    sensorTags[peripheral.identifier.uuidString]?.writeValue(data, for: characteristic, type: .withResponse)
                 }
                 
                 // Movement Configuration Period
@@ -347,8 +349,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     let bytes : [UInt8] = [ currentPeriod ]
                     let data = Data(bytes:bytes)
 
-                    movementCharacteristicPeriod = characteristic
-                    sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
+                    movementCharacteristicPeriod[peripheral.identifier.uuidString] = characteristic
+                    sensorTags[peripheral.identifier.uuidString]?.writeValue(data, for: characteristic, type: .withResponse)
                 }
                 
                 // IO Service Configuration Characteristic
@@ -358,24 +360,31 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                     let bytes : [UInt8] = [ 0x01 ]
                     let data = Data(bytes:bytes)
                     
-                    sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
+                    sensorTags[peripheral.identifier.uuidString]?.writeValue(data, for: characteristic, type: .withResponse)
                 }
                 
                 // IO Service Data (enable LEDS)
                 if characteristic.uuid == CBUUID(string: Device.IOServiceDataUUID) {
                     // Enable LED 1 - red, 2 - green, 3 - red+green
 
-                    let bytes : [UInt8] = [ 0x01 ]
-                    let data = Data(bytes:bytes)
                     
-                    sensorTag?.writeValue(data, for: characteristic, type: .withResponse)
+                    let bytes : [UInt8] = [ currentSensor ]
+                    let data = Data(bytes:bytes)
+                    sensorTags[peripheral.identifier.uuidString]?.writeValue(data, for: characteristic, type: .withResponse)
+                    
+                    currentSensor += 1
+                    if currentSensor == 4 {
+                        currentSensor = 1
+                    }
+                    
+
                 }
                 
                 // SimpleKey Data Characteristic
                 if characteristic.uuid == CBUUID(string: Device.SimpleKeyDataUUID) {
                     // Enable the Movement Sensor notifications
-                    buttonPressedCharacteristic = characteristic
-                    sensorTag?.setNotifyValue(true, for: characteristic)
+                    buttonPressedCharacteristic[peripheral.identifier.uuidString] = characteristic
+                    sensorTags[peripheral.identifier.uuidString]?.setNotifyValue(true, for: characteristic)
                 }
                 
                 
@@ -475,6 +484,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         print("***\(currentTime) Acc XYZ: \(AccX) \(AccY) \(AccZ) ");
         print("***\(currentTime) Mag XYZ: \(MagX) \(MagY) \(MagZ) ");
         
+        status = .prepared
+        
     }
     
     func extractData(_ data:Data){
@@ -556,7 +567,12 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
         let bytes : [UInt8] = [ currentPeriod ]
         let data = Data(bytes:bytes)
-        sensorTag?.writeValue(data, for: movementCharacteristicPeriod!, type: .withResponse)
+        
+        if sensorTags.count != 0 {
+            for (key,_) in sensorTags {
+                sensorTags[key]?.writeValue(data, for: (movementCharacteristicPeriod[key] as? CBCharacteristic)!, type: .withResponse)
+            }
+        }
     }
     
     func сonnecting() {
@@ -571,12 +587,15 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         sensorsStatusImage.image = #imageLiteral(resourceName: "error")
         
         if centralManager != nil {
-            if sensorTag != nil {
-                centralManager.cancelPeripheralConnection(sensorTag!)
+            if sensorTags.count != 0 {
+                sensorTags.forEach({ (key, value) in
+                    centralManager.cancelPeripheralConnection(sensorTags[key]!)
+                })
             }
-            sensorTag = nil
+            sensorTags.removeAll()
             centralManager.scanForPeripherals(withServices: nil, options: nil)
         }
+        
     }
     
     func prepared() {
