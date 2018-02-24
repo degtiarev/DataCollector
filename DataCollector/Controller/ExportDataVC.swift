@@ -7,29 +7,81 @@
 //
 
 import UIKit
+import CoreData
 
-class ExportDataVC: UIViewController {
-
+class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource, NSFetchedResultsControllerDelegate {
+    
+    @IBOutlet weak var tableView: UITableView!
+    
+    var controller: NSFetchedResultsController<Session>!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        attemptFetch()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell", for: indexPath) as! ItemCell
+        configureCell(cell: cell, indexPath: indexPath as NSIndexPath)
+        return cell
     }
-    */
-
+    
+    func configureCell(cell: ItemCell, indexPath: NSIndexPath) {
+        
+        let session = controller.object(at: indexPath as IndexPath)
+        cell.configureCell(session: session)
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let sections = controller.sections {
+            let sectionInfo = sections[section]
+            return sectionInfo.numberOfObjects
+        }
+        
+        return 0
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        if let sections = controller.sections {
+            return sections.count
+        }
+        
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 64
+    }
+    
+    
+    func attemptFetch(){
+        let fetchRequest: NSFetchRequest<Session> = Session.fetchRequest()
+        let idSort = NSSortDescriptor(key: "id", ascending: false)
+        fetchRequest.sortDescriptors = [idSort]
+        
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        
+        controller.delegate = self
+        
+        self.controller = controller
+        
+        do {
+            
+            try self.controller.performFetch()
+            
+        } catch {
+            
+            let error = error as NSError
+            print("\(error)")
+            
+        }
+        
+    }
 }

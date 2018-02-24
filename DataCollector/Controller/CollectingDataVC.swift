@@ -100,7 +100,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         //           If the value is nil, the central manager dispatches central role events using the main queue.
         
         centralManager = CBCentralManager(delegate: self, queue: nil)
-        fillTestData()
+       // fillTestData()
         
     }
     
@@ -571,7 +571,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     @IBAction func StartButtonpressed(_ sender: Any) {
         status = .recording
         
-        timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 0.001, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
         startTime = NSDate.timeIntervalSinceReferenceDate
     }
     
@@ -617,6 +617,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
         //concatenate minuts, seconds and milliseconds as assign it to the UILabel
         recordTimeLabel.text = "\(strMinutes):\(strSeconds):\(strFraction)"
+        
     }
     
     
@@ -777,6 +778,9 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let session1 = Session(context: context)
         session1.id = 1
         session1.duration = "00:10"
+        session1.date = NSDate()
+        session1.period = 0.1
+        session1.sensorsAmount = 3
         session1.addToToSensorData(sensorData1)
         session1.addToToSensorData(sensorData2)
         session1.addToToSensorData(sensorData3)
@@ -784,6 +788,9 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let session2 = Session(context: context)
         session2.id = 2
         session2.duration = "00:15"
+        session2.date = NSDate()
+        session2.period = 0.1
+        session2.sensorsAmount = 3
         session2.addToToSensorData(sensorData1)
         session2.addToToSensorData(sensorData2)
         session2.addToToSensorData(sensorData3)

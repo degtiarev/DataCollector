@@ -16,6 +16,21 @@ class ItemCell: UITableViewCell {
     @IBOutlet weak var periodLabel: UILabel!
     @IBOutlet weak var sensorsLabel: UILabel!
     
+    func configureCell (session: Session){
+        
+        // Format dateTime
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy  HH:mm:ss"
+        let myString = formatter.string(from: session.date! as Date)
+       
+        
+        idSessionLabel.text = "\(session.id)"
+        dateSessionLabel.text = myString
+        durationLabel.text = session.duration
+        periodLabel.text = "\(session.period)"
+        sensorsLabel.text = "\(session.sensorsAmount)"
+    }
+    
     
     @IBAction func deletePressedButton(_ sender: Any) {
     }

@@ -19,6 +19,9 @@ extension Session {
 
     @NSManaged public var duration: String?
     @NSManaged public var id: Int32
+    @NSManaged public var date: NSDate?
+    @NSManaged public var period: Float
+    @NSManaged public var sensorsAmount: Int32
     @NSManaged public var toSensorData: NSSet?
 
 }

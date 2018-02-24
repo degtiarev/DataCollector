@@ -22,15 +22,18 @@
         <relationship name="toSession" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Session" inverseName="toSensorData" inverseEntity="Session" syncable="YES"/>
     </entity>
     <entity name="Session" representedClassName="Session" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="duration" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="period" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="sensorsAmount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="toSensorData" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SensorData" inverseName="toSession" inverseEntity="SensorData" syncable="YES"/>
     </entity>
     <elements>
         <element name="Characteristic" positionX="-515" positionY="-72" width="128" height="118"/>
         <element name="CharacteristicName" positionX="-513" positionY="135" width="128" height="73"/>
         <element name="SensorData" positionX="-333" positionY="-63" width="128" height="103"/>
-        <element name="Session" positionX="-315" positionY="126" width="128" height="88"/>
+        <element name="Session" positionX="-315" positionY="126" width="128" height="133"/>
         <element name="Sensor" positionX="-108" positionY="18" width="128" height="73"/>
     </elements>
 </model>
