@@ -553,7 +553,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
-    // MARK - Update UI
+    // MARK - Action controlls
     
     @IBAction func sensorsChangedNumber(_ sender: UISlider) {
         // Change moving mode
@@ -582,6 +582,25 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
         
     }
+    
+    @IBAction func StartButtonpressed(_ sender: Any) {
+        status = .recording
+    }
+    
+    
+    @IBAction func stopButtonPressed(_ sender: Any) {
+        status = .prepared
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // MARK - Update changing state
     
     func сonnecting() {
         recordNumberLabel.isHidden = true
@@ -619,6 +638,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         recordTimeLabel.text = "00:00:000"
         startButton.isHidden = false
         stopButton.isHidden = false
+        startButton.isEnabled = true
         
         sensorsStatusLabel.text = "Ready to record"
         sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
@@ -632,6 +652,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         recordStatusImage.isHidden = false
         currentRecordNumberLabel.isHidden = false
         currentRecordNumberLabel.text = "0" // update from DB
+        startButton.isEnabled = false
         
         sensorsStatusLabel.text = "Recording..."
         sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
