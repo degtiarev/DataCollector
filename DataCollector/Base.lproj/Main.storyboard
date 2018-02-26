@@ -171,6 +171,7 @@
                         <viewLayoutGuide key="safeArea" id="Ay9-Dz-JtJ"/>
                     </view>
                     <navigationItem key="navigationItem" title="Export as csv" id="wsC-Il-9h2">
+                        <barButtonItem key="leftBarButtonItem" systemItem="trash" id="NCo-fC-XI9"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="action" id="JQE-Zm-aWw"/>
                     </navigationItem>
                     <connections>

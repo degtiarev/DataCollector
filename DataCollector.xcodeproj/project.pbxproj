@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DC9722DB2041482F002047EF /* DataCollector.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DC9722D92041482E002047EF /* DataCollector.xcdatamodeld */; };
+		DC23343E204386E900232A8A /* DataCollector.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DC23343C204386E900232A8A /* DataCollector.xcdatamodeld */; };
 		DC972306204150C0002047EF /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC972305204150C0002047EF /* ItemCell.swift */; };
 		DC97233920420968002047EF /* CharacteristicName+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC97232F20420968002047EF /* CharacteristicName+CoreDataClass.swift */; };
 		DC97233A20420968002047EF /* CharacteristicName+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC97233020420968002047EF /* CharacteristicName+CoreDataProperties.swift */; };
@@ -29,7 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		DC9722DA2041482E002047EF /* DataCollector.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataCollector.xcdatamodel; sourceTree = "<group>"; };
+		DC23343D204386E900232A8A /* DataCollector.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataCollector.xcdatamodel; sourceTree = "<group>"; };
 		DC972305204150C0002047EF /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
 		DC97232F20420968002047EF /* CharacteristicName+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CharacteristicName+CoreDataClass.swift"; sourceTree = "<group>"; };
 		DC97233020420968002047EF /* CharacteristicName+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CharacteristicName+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -103,7 +103,7 @@
 				DCB7BBFA203A5688001F1E9F /* Assets.xcassets */,
 				DCB7BBFC203A5688001F1E9F /* LaunchScreen.storyboard */,
 				DCB7BBFF203A5688001F1E9F /* Info.plist */,
-				DC9722D92041482E002047EF /* DataCollector.xcdatamodeld */,
+				DC23343C204386E900232A8A /* DataCollector.xcdatamodeld */,
 			);
 			path = DataCollector;
 			sourceTree = "<group>";
@@ -221,6 +221,7 @@
 				DC97233E20420968002047EF /* Session+CoreDataProperties.swift in Sources */,
 				DCB7BC0C203A6321001F1E9F /* ExportDataVC.swift in Sources */,
 				DC972306204150C0002047EF /* ItemCell.swift in Sources */,
+				DC23343E204386E900232A8A /* DataCollector.xcdatamodeld in Sources */,
 				DCB7BBF3203A5688001F1E9F /* CollectingDataVC.swift in Sources */,
 				DC97233A20420968002047EF /* CharacteristicName+CoreDataProperties.swift in Sources */,
 				DC97233C20420968002047EF /* Characteristic+CoreDataProperties.swift in Sources */,
@@ -228,7 +229,6 @@
 				DC97233920420968002047EF /* CharacteristicName+CoreDataClass.swift in Sources */,
 				DCB7BBF1203A5688001F1E9F /* AppDelegate.swift in Sources */,
 				DCB7BC0E203BE127001F1E9F /* Device.swift in Sources */,
-				DC9722DB2041482F002047EF /* DataCollector.xcdatamodeld in Sources */,
 				DC97234120420968002047EF /* Sensor+CoreDataClass.swift in Sources */,
 				DC97234020420968002047EF /* SensorData+CoreDataProperties.swift in Sources */,
 				DC97233B20420968002047EF /* Characteristic+CoreDataClass.swift in Sources */,
@@ -420,12 +420,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		DC9722D92041482E002047EF /* DataCollector.xcdatamodeld */ = {
+		DC23343C204386E900232A8A /* DataCollector.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				DC9722DA2041482E002047EF /* DataCollector.xcdatamodel */,
+				DC23343D204386E900232A8A /* DataCollector.xcdatamodel */,
 			);
-			currentVersion = DC9722DA2041482E002047EF /* DataCollector.xcdatamodel */;
+			currentVersion = DC23343D204386E900232A8A /* DataCollector.xcdatamodel */;
 			path = DataCollector.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

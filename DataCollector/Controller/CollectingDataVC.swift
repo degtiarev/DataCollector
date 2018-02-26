@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreBluetooth
+import CoreData
 
 class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate  {
     
@@ -54,6 +55,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
+    var currentSession: Session? = nil
+    var nextSessionid: Int = 0
     
     // Record stopwatch
     var startTime = TimeInterval()
@@ -100,7 +103,14 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         //           If the value is nil, the central manager dispatches central role events using the main queue.
         
         centralManager = CBCentralManager(delegate: self, queue: nil)
-       // fillTestData()
+        //fillTestData()
+        
+        findLastSessionId()
+        addNamesOfCharacteristics()
+        addSensorIDs()
+        
+    
+        
         
     }
     
@@ -437,6 +447,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     // MARK: - Converting data
     func displayMovement(_ data:Data, uiid: String) {
+        
         // We'll get four bytes of data back, so we divide the byte count by two
         // because we're creating an array that holds two 16-bit (two-byte) values
         let dataLength = data.count / MemoryLayout<Int16>.size
@@ -798,5 +809,96 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
         ad.saveContext()
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    func findLastSessionId() {
+        // Create Fetch Request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Session")
+        fetchRequest.fetchLimit = 1
+        
+        // Add Sort Descriptor
+        let sortDescriptor = NSSortDescriptor(key: "id", ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        do {
+            let record = try context.fetch(fetchRequest) as! [Session]
+            
+            if record.count == 1 {
+                let lastSession = record.first! as Session
+                nextSessionid = Int(lastSession.id)
+            }
+            
+        } catch {
+            print(error)
+        }
+        
+    }
+    
+    func addNamesOfCharacteristics(){
+        // Create Fetch Request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CharacteristicName")
+        
+        // Add Sort Descriptor
+        let sortDescriptor = NSSortDescriptor(key: "name", ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        do {
+            let record = try context.fetch(fetchRequest) as! [CharacteristicName]
+            
+            if record.count != 3 {
+                let characteristicName1 = CharacteristicName (context:context)
+                characteristicName1.name = "Gyro"
+                let characteristicName2 = CharacteristicName (context:context)
+                characteristicName2.name = "Acc"
+                let characteristicName3 = CharacteristicName (context:context)
+                characteristicName3.name = "Mag"
+                ad.saveContext()
+            }
+            
+        } catch {
+            print(error)
+        }
+        
+    }
+    
+    
+    func addSensorIDs(){
+        // Create Fetch Request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Sensor")
+        
+        // Add Sort Descriptor
+        let sortDescriptor = NSSortDescriptor(key: "id", ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        do {
+            let record = try context.fetch(fetchRequest) as! [Sensor]
+            
+            if record.count != 3 {
+                let sensor1 = Sensor(context: context)
+                sensor1.id = 1
+                let sensor2 = Sensor(context: context)
+                sensor2.id = 2
+                let sensor3 = Sensor(context: context)
+                sensor3.id = 3
+                ad.saveContext()
+            }
+            
+        } catch {
+            print(error)
+        }
+    }
+    
 }
 
