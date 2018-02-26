@@ -132,5 +132,34 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         
     }
     
+    @IBAction func deletePressed(_ sender: UIBarButtonItem) {
+        
+        let entities = ["Session", "Characteristic", "SensorData"]
+        
+        for entity in entities{
+            let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
+            let request = NSBatchDeleteRequest(fetchRequest: fetch)
+            
+            do {
+                
+                _ = try context.execute(request)
+                
+            } catch {
+                
+                let error = error as NSError
+                print("\(error)")
+            }
+            
+        }
+        
+        attemptFetch()
+        tableView.reloadData()
+    }
+    
+    
+    @IBAction func exportPressed(_ sender: Any) {
+        
+    }
+
     
 }

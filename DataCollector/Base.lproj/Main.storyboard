@@ -171,8 +171,16 @@
                         <viewLayoutGuide key="safeArea" id="Ay9-Dz-JtJ"/>
                     </view>
                     <navigationItem key="navigationItem" title="Export as csv" id="wsC-Il-9h2">
-                        <barButtonItem key="leftBarButtonItem" systemItem="trash" id="NCo-fC-XI9"/>
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="JQE-Zm-aWw"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="trash" id="NCo-fC-XI9">
+                            <connections>
+                                <action selector="deletePressed:" destination="9Cc-WK-eIL" id="vmH-QB-XeN"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="JQE-Zm-aWw">
+                            <connections>
+                                <action selector="exportPressed:" destination="9Cc-WK-eIL" id="2IG-Vt-rgW"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="kNY-Hc-elL" id="clU-MY-Nli"/>
