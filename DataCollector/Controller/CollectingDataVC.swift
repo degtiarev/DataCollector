@@ -55,8 +55,12 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
+    // For session saving
     var currentSession: Session? = nil
     var nextSessionid: Int = 0
+    var recordTime: String = ""
+    var characteristicsNames  = [CharacteristicName]()
+    var sensors = [Sensor]()
     
     // Record stopwatch
     var startTime = TimeInterval()
@@ -108,9 +112,6 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         findLastSessionId()
         addNamesOfCharacteristics()
         addSensorIDs()
-        
-    
-        
         
     }
     
@@ -469,13 +470,21 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
         let currentTime = "\(hour):\(minutes):\(seconds):\(nanoseconds)"
         
+//        characteristicsNames[0] = Acc
+//        characteristicsNames[1] = Gyro
+//        characteristicsNames[2]  = Mag
+        
         let rawGyroX:Int16 = dataArray[Device.SensorDataIndexGyroX]
         let GyroX = Float(rawGyroX) / (65536 / 500)
         let rawGyroY:Int16 = dataArray[Device.SensorDataIndexGyroY]
         let GyroY = Float(rawGyroY) / (65536 / 500)
         let rawGyroZ:Int16 = dataArray[Device.SensorDataIndexGyroZ]
         let GyroZ = Float(rawGyroZ) / (65536 / 500);
-        
+        let characteristicGyro = Characteristic (context:context)
+        characteristicGyro.x = GyroX
+        characteristicGyro.y = GyroY
+        characteristicGyro.z = GyroZ
+        characteristicGyro.toCharacteristicName = characteristicsNames[1]
         
         let rawAccX:Int16 = dataArray[Device.SensorDataIndexAccX]
         let AccX = Float(rawAccX) / (32768/16)
@@ -483,6 +492,11 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let AccY = Float(rawAccY) / (32768/16)
         let rawAccZ:Int16 = dataArray[Device.SensorDataIndexAccZ]
         let AccZ = Float(rawAccZ) / (32768/16)
+        let characteristicAcc = Characteristic (context:context)
+        characteristicAcc.x = AccX
+        characteristicAcc.y = AccY
+        characteristicAcc.z = AccZ
+        characteristicAcc.toCharacteristicName = characteristicsNames[0]
         
         
         let rawMagX:Int16 = dataArray[Device.SensorDataIndexMagX]
@@ -491,12 +505,27 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let MagY = Float(rawMagY)
         let rawMagZ:Int16 = dataArray[Device.SensorDataIndexMagZ]
         let MagZ = Float(rawMagZ)
+        let characteristicMag = Characteristic (context:context)
+        characteristicMag.x = AccX
+        characteristicMag.y = AccY
+        characteristicMag.z = AccZ
+        characteristicMag.toCharacteristicName = characteristicsNames[2]
+        
         
         print("***\(uiid) - LED \(sensorTagsWithLEDS[uiid] ?? 255)");
         print("***\(currentTime) Gyro XYZ: \(GyroX) \(GyroY) \(GyroZ) ");
         print("***\(currentTime) Acc XYZ: \(AccX) \(AccY) \(AccZ) ");
         print("***\(currentTime) Mag XYZ: \(MagX) \(MagY) \(MagZ) ");
         print("*****************************************************");
+        
+
+        let sensorData = SensorData(context: context)
+        sensorData.timeStamp = Date() as NSDate
+        sensorData.toSensor = sensors[sensorTagsWithLEDS[uiid]!-1]
+        sensorData.addToToCharacteristic(characteristicGyro)
+        sensorData.addToToCharacteristic(characteristicAcc)
+        sensorData.addToToCharacteristic(characteristicMag)
+        currentSession?.addToToSensorData(sensorData)
         
     }
     
@@ -584,12 +613,26 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
         timer = Timer.scheduledTimer(timeInterval: 0.001, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
         startTime = NSDate.timeIntervalSinceReferenceDate
+        
+        // Start session recording
+        currentSession = Session(context: context)
+        currentSession?.id = Int32(nextSessionid)
+        currentSession?.date = NSDate()
+        currentSession?.period =  Float (currentPeriod) / 100
+        currentSession?.sensorsAmount = Int32(currentNumberOfSensors)
     }
     
     
     @IBAction func stopButtonPressed(_ sender: Any) {
+        
+        // Finish session recording
+        timer.invalidate()
+        currentSession?.duration = recordTime
+        ad.saveContext()
+        currentSession = nil
+        nextSessionid += 1
+        
         status = .prepared
-         timer.invalidate()
     }
     
     
@@ -598,7 +641,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
-    
+
     
     
     // MARK - Record stopwatch
@@ -628,7 +671,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
         //concatenate minuts, seconds and milliseconds as assign it to the UILabel
         recordTimeLabel.text = "\(strMinutes):\(strSeconds):\(strFraction)"
-        
+        recordTime = "\(strMinutes):\(strSeconds)"
     }
     
     
@@ -668,14 +711,17 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     func prepared() {
         numberOfSensorsSlider.isEnabled = true
         periodSlider.isEnabled = true
+        currentRecordNumberLabel.isHidden = false
+        currentRecordNumberLabel.text =  "\(nextSessionid)"
         recordNumberLabel.isHidden = false
-        currentRecordNumberLabel.isHidden = true
+        recordNumberLabel.text = "Next record number:"
         recordStatusImage.isHidden = true
         recordTimeLabel.isHidden = false
         recordTimeLabel.text = "00:00:000"
         startButton.isHidden = false
         stopButton.isHidden = false
         startButton.isEnabled = true
+        stopButton.isEnabled = false
         
         sensorsStatusLabel.text = "Ready to record"
         sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
@@ -688,8 +734,10 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         periodSlider.isEnabled = false
         recordStatusImage.isHidden = false
         currentRecordNumberLabel.isHidden = false
-        currentRecordNumberLabel.text = "0" // update from DB
+        currentRecordNumberLabel.text = "\(nextSessionid)"
         startButton.isEnabled = false
+        stopButton.isEnabled = true
+        recordNumberLabel.text = "Record number:"
         
         sensorsStatusLabel.text = "Recording..."
         sensorsStatusImage.image = #imageLiteral(resourceName: "record")
@@ -699,7 +747,10 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
-    // Filling data for test
+    
+    
+    
+    //  MARK - Filling data for testing datamodel
     func fillTestData(){
         let sensor1 = Sensor(context: context)
         sensor1.id = 1
@@ -707,8 +758,8 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         sensor2.id = 2
         let sensor3 = Sensor(context: context)
         sensor3.id = 3
-        
-        
+
+
         let characteristicName1 = CharacteristicName (context:context)
         characteristicName1.name = "Gyro"
         let characteristicName2 = CharacteristicName (context:context)
@@ -716,6 +767,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let characteristicName3 = CharacteristicName (context:context)
         characteristicName3.name = "Mag"
         
+    
         
         let characteristic1 = Characteristic (context:context)
         characteristic1.x = 0.1
@@ -822,6 +874,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
+    //  MARK - Fetching and adding data to data model for local usage
     
     func findLastSessionId() {
         // Create Fetch Request
@@ -837,7 +890,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             
             if record.count == 1 {
                 let lastSession = record.first! as Session
-                nextSessionid = Int(lastSession.id)
+                nextSessionid = Int(lastSession.id) + 1
             }
             
         } catch {
@@ -855,9 +908,9 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         fetchRequest.sortDescriptors = [sortDescriptor]
         
         do {
-            let record = try context.fetch(fetchRequest) as! [CharacteristicName]
+            let records = try context.fetch(fetchRequest) as! [CharacteristicName]
             
-            if record.count != 3 {
+            if records.count != 3 {
                 let characteristicName1 = CharacteristicName (context:context)
                 characteristicName1.name = "Gyro"
                 let characteristicName2 = CharacteristicName (context:context)
@@ -868,6 +921,16 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             }
             
         } catch {
+            print(error)
+        }
+        
+        // Populate local array
+        let fetchRequestForLocalCharacteristicName: NSFetchRequest<CharacteristicName> = CharacteristicName.fetchRequest()
+        let sortDescriptorForLocalCharacteristicName = NSSortDescriptor(key: "name", ascending: true)
+        fetchRequestForLocalCharacteristicName.sortDescriptors = [sortDescriptorForLocalCharacteristicName]
+        do {
+            self.characteristicsNames = try context.fetch(fetchRequestForLocalCharacteristicName)
+        }   catch   {
             print(error)
         }
         
@@ -883,9 +946,9 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         fetchRequest.sortDescriptors = [sortDescriptor]
         
         do {
-            let record = try context.fetch(fetchRequest) as! [Sensor]
+            let records = try context.fetch(fetchRequest) as! [Sensor]
             
-            if record.count != 3 {
+            if records.count != 3 {
                 let sensor1 = Sensor(context: context)
                 sensor1.id = 1
                 let sensor2 = Sensor(context: context)
@@ -898,7 +961,19 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         } catch {
             print(error)
         }
+        
+        // Populate local array
+        let fetchRequestForLocalSensors: NSFetchRequest<Sensor> = Sensor.fetchRequest()
+        let sortDescriptorForLocalSensors = NSSortDescriptor(key: "id", ascending: true)
+        fetchRequestForLocalSensors.sortDescriptors = [sortDescriptorForLocalSensors]
+        do {
+            self.sensors = try context.fetch(fetchRequestForLocalSensors)
+        }   catch   {
+            print(error)
+        }
     }
+    
+   
     
 }
 
