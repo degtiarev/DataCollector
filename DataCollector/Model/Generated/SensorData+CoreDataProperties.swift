@@ -2,7 +2,7 @@
 //  SensorData+CoreDataProperties.swift
 //  DataCollector
 //
-//  Created by Aleksei Degtiarev on 24/02/2018.
+//  Created by Aleksei Degtiarev on 27/02/2018.
 //  Copyright © 2018 Aleksei Degtiarev. All rights reserved.
 //
 //
@@ -19,8 +19,8 @@ extension SensorData {
 
     @NSManaged public var timeStamp: NSDate?
     @NSManaged public var toCharacteristic: NSSet?
-    @NSManaged public var toSession: Session?
     @NSManaged public var toSensor: Sensor?
+    @NSManaged public var toSession: Session?
 
 }
 

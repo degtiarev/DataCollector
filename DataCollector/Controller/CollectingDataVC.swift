@@ -480,11 +480,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let GyroY = Float(rawGyroY) / (65536 / 500)
         let rawGyroZ:Int16 = dataArray[Device.SensorDataIndexGyroZ]
         let GyroZ = Float(rawGyroZ) / (65536 / 500);
-        let characteristicGyro = Characteristic (context:context)
-        characteristicGyro.x = GyroX
-        characteristicGyro.y = GyroY
-        characteristicGyro.z = GyroZ
-        characteristicGyro.toCharacteristicName = characteristicsNames[1]
+
         
         let rawAccX:Int16 = dataArray[Device.SensorDataIndexAccX]
         let AccX = Float(rawAccX) / (32768/16)
@@ -492,12 +488,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let AccY = Float(rawAccY) / (32768/16)
         let rawAccZ:Int16 = dataArray[Device.SensorDataIndexAccZ]
         let AccZ = Float(rawAccZ) / (32768/16)
-        let characteristicAcc = Characteristic (context:context)
-        characteristicAcc.x = AccX
-        characteristicAcc.y = AccY
-        characteristicAcc.z = AccZ
-        characteristicAcc.toCharacteristicName = characteristicsNames[0]
-        
+
         
         let rawMagX:Int16 = dataArray[Device.SensorDataIndexMagX]
         let MagX = Float(rawMagX)
@@ -505,12 +496,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let MagY = Float(rawMagY)
         let rawMagZ:Int16 = dataArray[Device.SensorDataIndexMagZ]
         let MagZ = Float(rawMagZ)
-        let characteristicMag = Characteristic (context:context)
-        characteristicMag.x = AccX
-        characteristicMag.y = AccY
-        characteristicMag.z = AccZ
-        characteristicMag.toCharacteristicName = characteristicsNames[2]
-        
+
         
         print("***\(uiid) - LED \(sensorTagsWithLEDS[uiid] ?? 255)");
         print("***\(currentTime) Gyro XYZ: \(GyroX) \(GyroY) \(GyroZ) ");
@@ -518,14 +504,37 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         print("***\(currentTime) Mag XYZ: \(MagX) \(MagY) \(MagZ) ");
         print("*****************************************************");
         
-
-        let sensorData = SensorData(context: context)
-        sensorData.timeStamp = Date() as NSDate
-        sensorData.toSensor = sensors[sensorTagsWithLEDS[uiid]!-1]
-        sensorData.addToToCharacteristic(characteristicGyro)
-        sensorData.addToToCharacteristic(characteristicAcc)
-        sensorData.addToToCharacteristic(characteristicMag)
-        currentSession?.addToToSensorData(sensorData)
+        
+        if (status == .recording)
+        {
+            
+            let characteristicGyro = Characteristic (context:context)
+            characteristicGyro.x = GyroX
+            characteristicGyro.y = GyroY
+            characteristicGyro.z = GyroZ
+            characteristicGyro.toCharacteristicName = characteristicsNames[1]
+            
+            let characteristicAcc = Characteristic (context:context)
+            characteristicAcc.x = AccX
+            characteristicAcc.y = AccY
+            characteristicAcc.z = AccZ
+            characteristicAcc.toCharacteristicName = characteristicsNames[0]
+            
+            let characteristicMag = Characteristic (context:context)
+            characteristicMag.x = AccX
+            characteristicMag.y = AccY
+            characteristicMag.z = AccZ
+            characteristicMag.toCharacteristicName = characteristicsNames[2]
+            
+            
+            let sensorData = SensorData(context: context)
+            sensorData.timeStamp = Date() as NSDate
+            sensorData.toSensor = sensors[sensorTagsWithLEDS[uiid]!-1]
+            sensorData.addToToCharacteristic(characteristicGyro)
+            sensorData.addToToCharacteristic(characteristicAcc)
+            sensorData.addToToCharacteristic(characteristicMag)
+            currentSession?.addToToSensorData(sensorData)
+        }
         
     }
     

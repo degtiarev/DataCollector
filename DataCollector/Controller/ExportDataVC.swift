@@ -85,7 +85,7 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         
     }
     
-  
+    
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         tableView.beginUpdates()
     }
@@ -157,9 +157,23 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     }
     
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+            context.delete(controller.fetchedObjects![indexPath.row])
+            do {
+                try context.save()
+                tableView.reloadData()
+            } catch let error as NSError {
+                print("Could not save. \(error), \(error.userInfo)")
+            }
+        }
+        
+    }
+    
     @IBAction func exportPressed(_ sender: Any) {
         
     }
-
+    
     
 }

@@ -2,7 +2,7 @@
 //  Session+CoreDataProperties.swift
 //  DataCollector
 //
-//  Created by Aleksei Degtiarev on 24/02/2018.
+//  Created by Aleksei Degtiarev on 27/02/2018.
 //  Copyright © 2018 Aleksei Degtiarev. All rights reserved.
 //
 //
@@ -17,9 +17,9 @@ extension Session {
         return NSFetchRequest<Session>(entityName: "Session")
     }
 
+    @NSManaged public var date: NSDate?
     @NSManaged public var duration: String?
     @NSManaged public var id: Int32
-    @NSManaged public var date: NSDate?
     @NSManaged public var period: Float
     @NSManaged public var sensorsAmount: Int32
     @NSManaged public var toSensorData: NSSet?
