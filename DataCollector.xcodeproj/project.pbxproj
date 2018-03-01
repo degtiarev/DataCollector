@@ -19,6 +19,7 @@
 		DC963A7720453A3D0008B6F5 /* CharacteristicName+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC963A6D20453A3D0008B6F5 /* CharacteristicName+CoreDataClass.swift */; };
 		DC963A7820453A3D0008B6F5 /* CharacteristicName+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC963A6E20453A3D0008B6F5 /* CharacteristicName+CoreDataProperties.swift */; };
 		DC972306204150C0002047EF /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC972305204150C0002047EF /* ItemCell.swift */; };
+		DCA52D7F2046A7F00011AA74 /* RoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA52D7E2046A7F00011AA74 /* RoundButton.swift */; };
 		DCB7BBF1203A5688001F1E9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BBF0203A5688001F1E9F /* AppDelegate.swift */; };
 		DCB7BBF3203A5688001F1E9F /* CollectingDataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BBF2203A5688001F1E9F /* CollectingDataVC.swift */; };
 		DCB7BBF6203A5688001F1E9F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DCB7BBF4203A5688001F1E9F /* Main.storyboard */; };
@@ -26,6 +27,7 @@
 		DCB7BBFE203A5688001F1E9F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DCB7BBFC203A5688001F1E9F /* LaunchScreen.storyboard */; };
 		DCB7BC0C203A6321001F1E9F /* ExportDataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BC0B203A6321001F1E9F /* ExportDataVC.swift */; };
 		DCB7BC0E203BE127001F1E9F /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BC0D203BE127001F1E9F /* Device.swift */; };
+		DCF103EE2046BB17005B63C5 /* SettingsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCF103ED2046BB17005B63C5 /* SettingsTableVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +43,7 @@
 		DC963A6D20453A3D0008B6F5 /* CharacteristicName+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CharacteristicName+CoreDataClass.swift"; sourceTree = "<group>"; };
 		DC963A6E20453A3D0008B6F5 /* CharacteristicName+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CharacteristicName+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		DC972305204150C0002047EF /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
+		DCA52D7E2046A7F00011AA74 /* RoundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundButton.swift; sourceTree = "<group>"; };
 		DCB7BBED203A5688001F1E9F /* DataCollector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataCollector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCB7BBF0203A5688001F1E9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DCB7BBF2203A5688001F1E9F /* CollectingDataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectingDataVC.swift; sourceTree = "<group>"; };
@@ -50,6 +53,7 @@
 		DCB7BBFF203A5688001F1E9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DCB7BC0B203A6321001F1E9F /* ExportDataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportDataVC.swift; sourceTree = "<group>"; };
 		DCB7BC0D203BE127001F1E9F /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		DCF103ED2046BB17005B63C5 /* SettingsTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				DC972305204150C0002047EF /* ItemCell.swift */,
+				DCA52D7E2046A7F00011AA74 /* RoundButton.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -134,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				DCB7BBF2203A5688001F1E9F /* CollectingDataVC.swift */,
+				DCF103ED2046BB17005B63C5 /* SettingsTableVC.swift */,
 				DCB7BC0B203A6321001F1E9F /* ExportDataVC.swift */,
 			);
 			path = Controller;
@@ -222,6 +228,7 @@
 				DCB7BC0C203A6321001F1E9F /* ExportDataVC.swift in Sources */,
 				DC972306204150C0002047EF /* ItemCell.swift in Sources */,
 				DC963A7520453A3D0008B6F5 /* Characteristic+CoreDataClass.swift in Sources */,
+				DCF103EE2046BB17005B63C5 /* SettingsTableVC.swift in Sources */,
 				DC23343E204386E900232A8A /* DataCollector.xcdatamodeld in Sources */,
 				DCB7BBF3203A5688001F1E9F /* CollectingDataVC.swift in Sources */,
 				DCB7BBF1203A5688001F1E9F /* AppDelegate.swift in Sources */,
@@ -232,6 +239,7 @@
 				DC963A7820453A3D0008B6F5 /* CharacteristicName+CoreDataProperties.swift in Sources */,
 				DC963A7120453A3D0008B6F5 /* SensorData+CoreDataClass.swift in Sources */,
 				DC963A7020453A3D0008B6F5 /* Sensor+CoreDataProperties.swift in Sources */,
+				DCA52D7F2046A7F00011AA74 /* RoundButton.swift in Sources */,
 				DC963A7620453A3D0008B6F5 /* Characteristic+CoreDataProperties.swift in Sources */,
 				DC963A7320453A3D0008B6F5 /* Session+CoreDataClass.swift in Sources */,
 			);
