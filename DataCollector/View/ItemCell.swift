@@ -15,6 +15,8 @@ class ItemCell: UITableViewCell {
     @IBOutlet weak var durationLabel: UILabel!
     @IBOutlet weak var periodLabel: UILabel!
     @IBOutlet weak var sensorsLabel: UILabel!
+    @IBOutlet weak var isWalkingLabel: UILabel!
+    
     
     func configureCell (session: Session){
         
@@ -29,6 +31,7 @@ class ItemCell: UITableViewCell {
         durationLabel.text = session.duration
         periodLabel.text = "\(session.period)"
         sensorsLabel.text = "\(session.sensorsAmount)"
+        isWalkingLabel.text = "\(session.isWalking)"
     }
     
     

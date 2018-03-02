@@ -2,7 +2,7 @@
 //  Session+CoreDataProperties.swift
 //  DataCollector
 //
-//  Created by Aleksei Degtiarev on 27/02/2018.
+//  Created by Aleksei Degtiarev on 02/03/2018.
 //  Copyright © 2018 Aleksei Degtiarev. All rights reserved.
 //
 //
@@ -22,6 +22,7 @@ extension Session {
     @NSManaged public var id: Int32
     @NSManaged public var period: Float
     @NSManaged public var sensorsAmount: Int32
+    @NSManaged public var isWalking: Int32
     @NSManaged public var toSensorData: NSSet?
 
 }

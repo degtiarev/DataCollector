@@ -10,17 +10,14 @@ import UIKit
 import CoreBluetooth
 import CoreData
 
-class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate  {
+
+class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, ClassSettingsTableVCDelegate  {
+    
+
+    // Settings view controller
+    weak var settingsTableVC:SettingsTableVC?
     
     // Controlls outlets
-    @IBOutlet weak var currentNumberOfSensorsLabel: UILabel!
-    @IBOutlet weak var numberOfSensorsSlider: UISlider!
-    @IBOutlet weak var sensorsStatusLabel: UILabel!
-    @IBOutlet weak var sensorsStatusImage: UIImageView!
-    @IBOutlet weak var currentPeriodLabel: UILabel!
-    @IBOutlet weak var periodSlider: UISlider!
-    @IBOutlet weak var currentRecordNumberLabel: UILabel!
-    @IBOutlet weak var recordNumberLabel: UILabel!
     @IBOutlet weak var recordTimeLabel: UILabel!
     @IBOutlet weak var recordStatusImage: UIImageView!
     @IBOutlet weak var startButton: UIButton!
@@ -73,6 +70,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     // Changing variable
     var currentNumberOfSensors: Int = 0
     var currentPeriod: UInt8 = 0
+    var isWalking: Int = 0
     
     // Define our scanning interval times
     var keepScanning = false
@@ -92,15 +90,10 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     // the SensorTag, or if you don't know what model it is...)
     let sensorTagName = "CC2650 SensorTag"
     
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Update start current value
-        sensorsChangedNumber(numberOfSensorsSlider)
-        periodChangedNumber(periodSlider)
-        
-        
+    
         // Create our CBCentral Manager
         // delegate: The delegate that will receive central role events. Typically self.
         // queue:    The dispatch queue to use to dispatch the central role events.
@@ -115,6 +108,18 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destination = segue.destination
+        if let settingsTableVC = destination as? SettingsTableVC {
+            
+            settingsTableVC.delegate = self
+            self.settingsTableVC = segue.destination as? SettingsTableVC
+        }
+    }
+    
+    
+    
+
     
     
     
@@ -587,25 +592,16 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     
     
     
-    // MARK - Action controlls
+    // MARK - Dekegate settings updates
     
-    @IBAction func sensorsChangedNumber(_ sender: UISlider) {
-        // Change moving mode
-        sender.setValue(sender.value.rounded(.down), animated: true)
-        
-        let sensorsNumber = Int (sender.value)
-        currentNumberOfSensorsLabel.text = "\(sensorsNumber)"
-        currentNumberOfSensors = sensorsNumber
-        
+    func sensorsChangedNumberSettingsDelegate(_ number: Int){
+        currentNumberOfSensors = number
         status = .connecting
     }
     
-    @IBAction func periodChangedNumber(_ sender: UISlider) {
-        let period = String(format: "%.1f", sender.value )
-        currentPeriodLabel.text = period
-        
-        currentPeriod = UInt8 ( (Float (period)!) * 100)
-        
+    
+    func periodChangedNumberSettingsDelegate(_ number: UInt8){
+        currentPeriod = number
         // Update period of all sensors
         let bytes : [UInt8] = [ currentPeriod ]
         let data = Data(bytes:bytes)
@@ -614,8 +610,26 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
                 sensorTags[key]?.writeValue(data, for: (movementCharacteristicPeriod[key] as? CBCharacteristic)!, type: .withResponse)
             }
         }
-        
     }
+    
+    
+    func isWalkingChangedValueSettingsDelegate(_ value: Bool){
+        if value {
+            isWalking = 1
+        }
+        else {
+            isWalking = 0
+        }
+    }
+    
+    
+
+    
+    
+    
+    
+    
+    // MARK - Action controlls
     
     @IBAction func StartButtonpressed(_ sender: Any) {
         status = .recording
@@ -629,6 +643,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         currentSession?.date = NSDate()
         currentSession?.period =  Float (currentPeriod) / 100
         currentSession?.sensorsAmount = Int32(currentNumberOfSensors)
+        currentSession?.isWalking = Int32(isWalking)
     }
     
     
@@ -692,15 +707,14 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     // MARK - Update changing state
     
     func сonnecting() {
-        recordNumberLabel.isHidden = true
-        currentRecordNumberLabel.isHidden = true
         recordStatusImage.isHidden = true
-        recordTimeLabel.isHidden = true
-        startButton.isHidden = true
-        stopButton.isHidden = true
+        recordTimeLabel.text = "00:00:000"
+        startButton.isEnabled = false
+        stopButton.isEnabled = false
         
-        sensorsStatusLabel.text = "Searching..."
-        sensorsStatusImage.image = #imageLiteral(resourceName: "error")
+        settingsTableVC?.currentRecordNumberLabel.text =  "\(nextSessionid)"
+        settingsTableVC?.sensorsStatusLabel.text = "Searching..."
+        settingsTableVC?.sensorsStatusImage.image = #imageLiteral(resourceName: "error")
         
         // If already connected sensor/sensors - reconect them
         if centralManager != nil {
@@ -718,12 +732,10 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     }
     
     func prepared() {
-        numberOfSensorsSlider.isEnabled = true
-        periodSlider.isEnabled = true
-        currentRecordNumberLabel.isHidden = false
-        currentRecordNumberLabel.text =  "\(nextSessionid)"
-        recordNumberLabel.isHidden = false
-        recordNumberLabel.text = "Next record number:"
+        settingsTableVC?.numberOfSensorsSlider.isEnabled = true
+        settingsTableVC?.periodSlider.isEnabled = true
+        settingsTableVC?.currentRecordNumberLabel.text =  "\(nextSessionid)"
+        settingsTableVC?.recordNumberLabel.text = "Next record number:"
         recordStatusImage.isHidden = true
         recordTimeLabel.isHidden = false
         recordTimeLabel.text = "00:00:000"
@@ -731,25 +743,27 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         stopButton.isHidden = false
         startButton.isEnabled = true
         stopButton.isEnabled = false
+        settingsTableVC?.isWalkingSwitch.isEnabled = true
         
-        sensorsStatusLabel.text = "Ready to record"
-        sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
+        settingsTableVC?.sensorsStatusLabel.text = "Ready to record"
+        settingsTableVC?.sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
         
         centralManager.stopScan()
     }
     
     func recording() {
-        numberOfSensorsSlider.isEnabled = false
-        periodSlider.isEnabled = false
+        settingsTableVC?.numberOfSensorsSlider.isEnabled = false
+        settingsTableVC?.periodSlider.isEnabled = false
         recordStatusImage.isHidden = false
-        currentRecordNumberLabel.isHidden = false
-        currentRecordNumberLabel.text = "\(nextSessionid)"
+        settingsTableVC?.currentRecordNumberLabel.isHidden = false
+        settingsTableVC?.currentRecordNumberLabel.text = "\(nextSessionid)"
         startButton.isEnabled = false
         stopButton.isEnabled = true
-        recordNumberLabel.text = "Record number:"
+        settingsTableVC?.isWalkingSwitch.isEnabled = false
+        settingsTableVC?.recordNumberLabel.text = "Record number:"
         
-        sensorsStatusLabel.text = "Recording..."
-        sensorsStatusImage.image = #imageLiteral(resourceName: "record")
+        settingsTableVC?.sensorsStatusLabel.text = "Recording..."
+        settingsTableVC?.sensorsStatusImage.image = #imageLiteral(resourceName: "record")
     }
     
     
