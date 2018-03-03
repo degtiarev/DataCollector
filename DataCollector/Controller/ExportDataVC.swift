@@ -178,11 +178,11 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         var csvText = "SessionID,SessionDate,SessionDuration,SessionPeriod,AmountOfSensors,IsWalking,Timestamp1,GyroX1,GyroY1,GyroZ1,AccX1,AccY1,AccZ1,MagX1,MagY1,MagZ1,Timestamp2,GyroX2,GyroY2,GyroZ2,AccX2,AccY2,AccZ2,MagX2,MagY2,MagZ2,Timestamp3,GyroX3,GyroY3,GyroZ3,AccX3,AccY3,AccZ3,MagX3,MagY3,MagZ3\n"
         
         let fetchRequestSession = NSFetchRequest<NSFetchRequestResult>(entityName: "Session")
-
+        
         // Add Sort Descriptors
         let sortDescriptorSession = NSSortDescriptor(key: "id", ascending: true)
         fetchRequestSession.sortDescriptors = [sortDescriptorSession]
-     
+        
         
         do {
             let sessions = try context.fetch(fetchRequestSession) as! [Session]
@@ -223,11 +223,22 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
                 let maxArray = max(SensorOutputs1.count, SensorOutputs2.count, SensorOutputs3.count)
                 
                 for i in 0..<maxArray {
-                    let sensorsInfo1 = "\(String(describing: SensorOutputs1[i].timeStamp!)),\(String(describing: SensorOutputs1[i].gyroX!)),\(String(describing: SensorOutputs1[i].gyroY!)),\(String(describing: SensorOutputs1[i].gyroZ!)),\(String(describing: SensorOutputs1[i].accX!)),\(String(describing: SensorOutputs1[i].accY!)),\(String(describing: SensorOutputs1[i].accZ!)),\(String(describing: SensorOutputs1[i].magX!)),\(String(describing: SensorOutputs1[i].magY!)),\(String(describing: SensorOutputs1[i].magZ!)),"
                     
-                    let sensorsInfo2 = "\(String(describing: SensorOutputs2[i].timeStamp!)),\(String(describing: SensorOutputs2[i].gyroX!)),\(String(describing: SensorOutputs2[i].gyroY!)),\(String(describing: SensorOutputs2[i].gyroZ!)),\(String(describing: SensorOutputs2[i].accX!)),\(String(describing: SensorOutputs2[i].accY!)),\(String(describing: SensorOutputs2[i].accZ!)),\(String(describing: SensorOutputs2[i].magX!)),\(String(describing: SensorOutputs2[i].magY!)),\(String(describing: SensorOutputs2[i].magZ!)),"
+                    var sensorsInfo1 = ""
+                    var sensorsInfo2 = ""
+                    var sensorsInfo3 = ""
                     
-                    let sensorsInfo3 = "\(String(describing: SensorOutputs3[i].timeStamp!)),\(String(describing: SensorOutputs3[i].gyroX!)),\(String(describing: SensorOutputs3[i].gyroY!)),\(String(describing: SensorOutputs3[i].gyroZ!)),\(String(describing: SensorOutputs3[i].accX!)),\(String(describing: SensorOutputs3[i].accY!)),\(String(describing: SensorOutputs3[i].accZ!)),\(String(describing: SensorOutputs3[i].magX!)),\(String(describing: SensorOutputs3[i].magY!)),\(String(describing: SensorOutputs3[i].magZ!)),"
+                    if  i < SensorOutputs1.count {
+                        sensorsInfo1 = "\(String(describing: SensorOutputs1[i].timeStamp!)),\(String(describing: SensorOutputs1[i].gyroX!)),\(String(describing: SensorOutputs1[i].gyroY!)),\(String(describing: SensorOutputs1[i].gyroZ!)),\(String(describing: SensorOutputs1[i].accX!)),\(String(describing: SensorOutputs1[i].accY!)),\(String(describing: SensorOutputs1[i].accZ!)),\(String(describing: SensorOutputs1[i].magX!)),\(String(describing: SensorOutputs1[i].magY!)),\(String(describing: SensorOutputs1[i].magZ!)),"
+                    }
+                    
+                    if i < SensorOutputs2.count {
+                        sensorsInfo2 = "\(String(describing: SensorOutputs2[i].timeStamp!)),\(String(describing: SensorOutputs2[i].gyroX!)),\(String(describing: SensorOutputs2[i].gyroY!)),\(String(describing: SensorOutputs2[i].gyroZ!)),\(String(describing: SensorOutputs2[i].accX!)),\(String(describing: SensorOutputs2[i].accY!)),\(String(describing: SensorOutputs2[i].accZ!)),\(String(describing: SensorOutputs2[i].magX!)),\(String(describing: SensorOutputs2[i].magY!)),\(String(describing: SensorOutputs2[i].magZ!)),"
+                    }
+                    
+                    if i < SensorOutputs3.count {
+                        sensorsInfo3 = "\(String(describing: SensorOutputs3[i].timeStamp!)),\(String(describing: SensorOutputs3[i].gyroX!)),\(String(describing: SensorOutputs3[i].gyroY!)),\(String(describing: SensorOutputs3[i].gyroZ!)),\(String(describing: SensorOutputs3[i].accX!)),\(String(describing: SensorOutputs3[i].accY!)),\(String(describing: SensorOutputs3[i].accZ!)),\(String(describing: SensorOutputs3[i].magX!)),\(String(describing: SensorOutputs3[i].magY!)),\(String(describing: SensorOutputs3[i].magZ!)),"
+                    }
                     
                     let sensorsInfo = sensorsInfo1 + sensorsInfo2 + sensorsInfo3
                     let endOfLine = "\n"
