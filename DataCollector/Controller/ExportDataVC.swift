@@ -240,6 +240,18 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
                         sensorsInfo3 = "\(String(describing: SensorOutputs3[i].timeStamp!)),\(String(describing: SensorOutputs3[i].gyroX!)),\(String(describing: SensorOutputs3[i].gyroY!)),\(String(describing: SensorOutputs3[i].gyroZ!)),\(String(describing: SensorOutputs3[i].accX!)),\(String(describing: SensorOutputs3[i].accY!)),\(String(describing: SensorOutputs3[i].accZ!)),\(String(describing: SensorOutputs3[i].magX!)),\(String(describing: SensorOutputs3[i].magY!)),\(String(describing: SensorOutputs3[i].magZ!)),"
                     }
                     
+                    let nilString = "0,0,0,0,0,0,0,0,0,0,"
+                    
+                    if sensorsInfo1 == "" {
+                        sensorsInfo1 = nilString
+                    }
+                    if sensorsInfo2 == "" {
+                        sensorsInfo2 = nilString
+                    }
+                    if sensorsInfo3 == "" {
+                        sensorsInfo3 = nilString
+                    }
+                    
                     let sensorsInfo = sensorsInfo1 + sensorsInfo2 + sensorsInfo3
                     let endOfLine = "\n"
                     
