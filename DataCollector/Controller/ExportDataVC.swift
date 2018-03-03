@@ -178,25 +178,14 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         var csvText = "SessionID,SessionDate,SessionDuration,SessionPeriod,AmountOfSensors,IsWalking,Timestamp1,GyroX1,GyroY1,GyroZ1,AccX1,AccY1,AccZ1,MagX1,MagY1,MagZ1,Timestamp2,GyroX2,GyroY2,GyroZ2,AccX2,AccY2,AccZ2,MagX2,MagY2,MagZ2,Timestamp3,GyroX3,GyroY3,GyroZ3,AccX3,AccY3,AccZ3,MagX3,MagY3,MagZ3\n"
         
         let fetchRequestSession = NSFetchRequest<NSFetchRequestResult>(entityName: "Session")
-        let fetchRequestSensor = NSFetchRequest<NSFetchRequestResult>(entityName: "Sensor")
-        let fetchRequestCharacteristicName = NSFetchRequest<NSFetchRequestResult>(entityName: "CharacteristicName")
-        
+
         // Add Sort Descriptors
         let sortDescriptorSession = NSSortDescriptor(key: "id", ascending: true)
         fetchRequestSession.sortDescriptors = [sortDescriptorSession]
-        
-        let sortDescriptorSensor = NSSortDescriptor(key: "id", ascending: true)
-        fetchRequestSensor.sortDescriptors = [sortDescriptorSensor]
-        
-        let sortDescriptorCharacteristicName = NSSortDescriptor(key: "name", ascending: true)
-        fetchRequestCharacteristicName.sortDescriptors = [sortDescriptorCharacteristicName]
-        
+     
         
         do {
             let sessions = try context.fetch(fetchRequestSession) as! [Session]
-            let sensors = try context.fetch(fetchRequestSensor) as! [Sensor]
-            var characteristicNames = try context.fetch(fetchRequestCharacteristicName) as! [CharacteristicName]
-            characteristicNames.swapAt(0, 1)
             
             for session in sessions {
                 
@@ -206,56 +195,50 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
                 let sessionPeriod = "\(session.period)"
                 let amountOfSensors = "\(session.sensorsAmount)"
                 let isWalking = "\(session.isWalking)"
-                var newLine = ""
-                var sensorsInfo = ""
-                
-                for sensor in sensors {
-                    
-                    for sensorData in session.toSensorData!.allObjects as! [SensorData] {
-                        
-                        if sensorData.toSensor == sensor {
-                            let timeStamp = ",\(String(describing: sensorData.timeStamp!))"
-                            sensorsInfo += timeStamp
-                            
-                            for characteristicName in characteristicNames {
-                                
-                                
-                                for characteristic in sensorData.toCharacteristic?.allObjects as! [Characteristic] {
-                                    
-                                    if characteristic.toCharacteristicName == characteristicName {
-                                        
-                                        let x = characteristic.x
-                                        let y = characteristic.y
-                                        let z = characteristic.z
-                                        
-                                        sensorsInfo += ",\(x),\(y),\(z)"
-                                        
-                                    }
-                                    
-                                    
-                                }
-                                
-                                
-                                
-                            } // Characteristic Name
-                            
-                            
-                        } // Sensors
-                        
-                        
-                        
-                    } // Sensor Data
-                    
-                    sensorsInfo += "\n"
-                    newLine = "\(sessionID),\(sessionDate),\(sessionDuration),\(sessionPeriod),\(amountOfSensors),\(isWalking)"
-                    csvText.append(newLine+sensorsInfo)
-                    newLine = ""
-                    
-                    
-                } // for session
+                let sessionInfoString = "\(sessionID),\(sessionDate),\(sessionDuration),\(sessionPeriod),\(amountOfSensors),\(isWalking),"
                 
                 
-            }
+                
+                var SensorOutputs1 = [SensorOutput]()
+                var SensorOutputs2 = [SensorOutput]()
+                var SensorOutputs3 = [SensorOutput]()
+                
+                
+                var sensorDatas = session.toSensorData!.allObjects as! [SensorData]
+                sensorDatas.sort(by: { $0.timeStamp?.compare($1.timeStamp! as Date) == ComparisonResult.orderedAscending })
+                
+                for sensorData in sensorDatas {
+                    let sensorOutput = getSensorOutput(sensorData: sensorData)
+                    
+                    if sensorData.toSensor?.id == 1 {
+                        SensorOutputs1.append(sensorOutput)
+                    } else if sensorData.toSensor?.id == 2 {
+                        SensorOutputs2.append(sensorOutput)
+                    } else if sensorData.toSensor?.id == 3 {
+                        SensorOutputs3.append(sensorOutput)
+                    }
+                    
+                }// for sensorData
+                
+                let maxArray = max(SensorOutputs1.count, SensorOutputs2.count, SensorOutputs3.count)
+                
+                for i in 0..<maxArray {
+                    let sensorsInfo1 = "\(String(describing: SensorOutputs1[i].timeStamp!)),\(String(describing: SensorOutputs1[i].gyroX!)),\(String(describing: SensorOutputs1[i].gyroY!)),\(String(describing: SensorOutputs1[i].gyroZ!)),\(String(describing: SensorOutputs1[i].accX!)),\(String(describing: SensorOutputs1[i].accY!)),\(String(describing: SensorOutputs1[i].accZ!)),\(String(describing: SensorOutputs1[i].magX!)),\(String(describing: SensorOutputs1[i].magY!)),\(String(describing: SensorOutputs1[i].magZ!)),"
+                    
+                    let sensorsInfo2 = "\(String(describing: SensorOutputs2[i].timeStamp!)),\(String(describing: SensorOutputs2[i].gyroX!)),\(String(describing: SensorOutputs2[i].gyroY!)),\(String(describing: SensorOutputs2[i].gyroZ!)),\(String(describing: SensorOutputs2[i].accX!)),\(String(describing: SensorOutputs2[i].accY!)),\(String(describing: SensorOutputs2[i].accZ!)),\(String(describing: SensorOutputs2[i].magX!)),\(String(describing: SensorOutputs2[i].magY!)),\(String(describing: SensorOutputs2[i].magZ!)),"
+                    
+                    let sensorsInfo3 = "\(String(describing: SensorOutputs3[i].timeStamp!)),\(String(describing: SensorOutputs3[i].gyroX!)),\(String(describing: SensorOutputs3[i].gyroY!)),\(String(describing: SensorOutputs3[i].gyroZ!)),\(String(describing: SensorOutputs3[i].accX!)),\(String(describing: SensorOutputs3[i].accY!)),\(String(describing: SensorOutputs3[i].accZ!)),\(String(describing: SensorOutputs3[i].magX!)),\(String(describing: SensorOutputs3[i].magY!)),\(String(describing: SensorOutputs3[i].magZ!)),"
+                    
+                    let sensorsInfo = sensorsInfo1 + sensorsInfo2 + sensorsInfo3
+                    let endOfLine = "\n"
+                    
+                    csvText.append(sessionInfoString + sensorsInfo + endOfLine)
+                    
+                }
+                
+                
+            }// for sessions
+            
             
             do {
                 try csvText.write(to: path!, atomically: true, encoding: String.Encoding.utf8)
@@ -280,6 +263,37 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         }
         
     } // export Pressed
+    
+    
+    func getSensorOutput(sensorData: SensorData) -> SensorOutput {
+        
+        let sensorOutput = SensorOutput()
+        sensorOutput.timeStamp = sensorData.timeStamp
+        
+        let characteristics = sensorData.toCharacteristic!.allObjects as! [Characteristic]
+        
+        for characteristic in characteristics {
+            
+            if characteristic.toCharacteristicName?.name == "Gyro" {
+                sensorOutput.gyroX = characteristic.x
+                sensorOutput.gyroY = characteristic.y
+                sensorOutput.gyroZ = characteristic.z
+                
+            } else if characteristic.toCharacteristicName?.name == "Acc" {
+                sensorOutput.accX = characteristic.x
+                sensorOutput.accY = characteristic.y
+                sensorOutput.accZ = characteristic.z
+                
+            } else if characteristic.toCharacteristicName?.name == "Mag" {
+                sensorOutput.magX = characteristic.x
+                sensorOutput.magY = characteristic.y
+                sensorOutput.magZ = characteristic.z
+            }
+            
+        }
+        
+        return sensorOutput
+    }
     
     
 }

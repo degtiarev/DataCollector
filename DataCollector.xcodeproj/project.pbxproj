@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DC119ECE204ABFA00035ED8F /* SensorOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC119ECD204ABFA00035ED8F /* SensorOutput.swift */; };
 		DC23343E204386E900232A8A /* DataCollector.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DC23343C204386E900232A8A /* DataCollector.xcdatamodeld */; };
 		DC972306204150C0002047EF /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC972305204150C0002047EF /* ItemCell.swift */; };
 		DCA52D7F2046A7F00011AA74 /* RoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA52D7E2046A7F00011AA74 /* RoundButton.swift */; };
@@ -31,6 +32,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DC119ECD204ABFA00035ED8F /* SensorOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorOutput.swift; sourceTree = "<group>"; };
 		DC23343D204386E900232A8A /* DataCollector.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataCollector.xcdatamodel; sourceTree = "<group>"; };
 		DC972305204150C0002047EF /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
 		DCA52D7E2046A7F00011AA74 /* RoundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundButton.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				DCB7BC0D203BE127001F1E9F /* Device.swift */,
+				DC119ECD204ABFA00035ED8F /* SensorOutput.swift */,
 				DCE3EFE82048F78900B8527C /* Session+CoreDataClass.swift */,
 				DCE3EFEA2048F78900B8527C /* SensorData+CoreDataClass.swift */,
 				DCE3EFEC2048F78900B8527C /* Sensor+CoreDataClass.swift */,
@@ -229,6 +232,7 @@
 				DC972306204150C0002047EF /* ItemCell.swift in Sources */,
 				DCE3EFF22048F78900B8527C /* Session+CoreDataClass.swift in Sources */,
 				DCF103EE2046BB17005B63C5 /* SettingsTableVC.swift in Sources */,
+				DC119ECE204ABFA00035ED8F /* SensorOutput.swift in Sources */,
 				DC23343E204386E900232A8A /* DataCollector.xcdatamodeld in Sources */,
 				DCE3EFFA2048F78900B8527C /* Characteristic+CoreDataClass.swift in Sources */,
 				DCE3EFF62048F78900B8527C /* Sensor+CoreDataClass.swift in Sources */,
