@@ -502,16 +502,14 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         let rawMagZ:Int16 = dataArray[Device.SensorDataIndexMagZ]
         let MagZ = Float(rawMagZ)
 
-        
-        print("***\(uiid) - LED \(sensorTagsWithLEDS[uiid] ?? 255)");
-        print("***\(currentTime) Gyro XYZ: \(GyroX) \(GyroY) \(GyroZ) ");
-        print("***\(currentTime) Acc XYZ: \(AccX) \(AccY) \(AccZ) ");
-        print("***\(currentTime) Mag XYZ: \(MagX) \(MagY) \(MagZ) ");
-        print("*****************************************************");
-        
-        
         if (status == .recording)
         {
+            print("***\(uiid) - LED \(sensorTagsWithLEDS[uiid] ?? 255)");
+            print("***\(currentTime) Gyro XYZ: \(GyroX) \(GyroY) \(GyroZ) ");
+            print("***\(currentTime) Acc XYZ: \(AccX) \(AccY) \(AccZ) ");
+            print("***\(currentTime) Mag XYZ: \(MagX) \(MagY) \(MagZ) ");
+            print("*****************************************************");
+
             
             let characteristicGyro = Characteristic (context:context)
             characteristicGyro.x = GyroX
@@ -526,9 +524,9 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             characteristicAcc.toCharacteristicName = characteristicsNames[0]
             
             let characteristicMag = Characteristic (context:context)
-            characteristicMag.x = AccX
-            characteristicMag.y = AccY
-            characteristicMag.z = AccZ
+            characteristicMag.x = MagX
+            characteristicMag.y = MagY
+            characteristicMag.z = MagZ
             characteristicMag.toCharacteristicName = characteristicsNames[2]
             
             
