@@ -244,7 +244,7 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
                         sensorsInfo3 = "\(df.string(from: SensorOutputs3[i].timeStamp! as Date)),\(String(describing: SensorOutputs3[i].timeStamp!.timeIntervalSince1970)),\(String(describing: SensorOutputs3[i].gyroX!)),\(String(describing: SensorOutputs3[i].gyroY!)),\(String(describing: SensorOutputs3[i].gyroZ!)),\(String(describing: SensorOutputs3[i].accX!)),\(String(describing: SensorOutputs3[i].accY!)),\(String(describing: SensorOutputs3[i].accZ!)),\(String(describing: SensorOutputs3[i].magX!)),\(String(describing: SensorOutputs3[i].magY!)),\(String(describing: SensorOutputs3[i].magZ!)),"
                     }
                     
-                    let nilString = ",,,,,,,,,,"
+                    let nilString = ",,,,,,,,,,,"
                     
                     if sensorsInfo1 == "" {
                         sensorsInfo1 = nilString
