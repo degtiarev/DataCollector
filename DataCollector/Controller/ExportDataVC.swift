@@ -175,7 +175,10 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         
         let fileName = "Sessions.csv"
         let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-        var csvText = "SessionID,SessionDate,SessionDuration,SessionPeriod,AmountOfSensors,IsWalking,Timestamp1,GyroX1,GyroY1,GyroZ1,AccX1,AccY1,AccZ1,MagX1,MagY1,MagZ1,Timestamp2,GyroX2,GyroY2,GyroZ2,AccX2,AccY2,AccZ2,MagX2,MagY2,MagZ2,Timestamp3,GyroX3,GyroY3,GyroZ3,AccX3,AccY3,AccZ3,MagX3,MagY3,MagZ3\n"
+        var csvText = "SessionID,SessionDate,SessionDuration,SessionPeriod,AmountOfSensors,IsWalking,Timestamp1,timeIntervalSince1970_1,GyroX1,GyroY1,GyroZ1,AccX1,AccY1,AccZ1,MagX1,MagY1,MagZ1,Timestamp2,timeIntervalSince1970_2,GyroX2,GyroY2,GyroZ2,AccX2,AccY2,AccZ2,MagX2,MagY2,MagZ2,Timestamp3,timeIntervalSince1970_3,GyroX3,GyroY3,GyroZ3,AccX3,AccY3,AccZ3,MagX3,MagY3,MagZ3\n"
+        
+        let df = DateFormatter()
+        df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS"
         
         let fetchRequestSession = NSFetchRequest<NSFetchRequestResult>(entityName: "Session")
         
@@ -190,7 +193,7 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
             for session in sessions {
                 
                 let sessionID = "\(session.id)"
-                let sessionDate = "\(String(describing: session.date!))"
+                let sessionDate = "\(df.string(from: session.date! as Date))"
                 let sessionDuration = "\(session.duration!)"
                 let sessionPeriod = "\(session.period)"
                 let amountOfSensors = "\(session.sensorsAmount)"
@@ -229,18 +232,19 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
                     var sensorsInfo3 = ""
                     
                     if  i < SensorOutputs1.count {
-                        sensorsInfo1 = "\(String(describing: SensorOutputs1[i].timeStamp!)),\(String(describing: SensorOutputs1[i].gyroX!)),\(String(describing: SensorOutputs1[i].gyroY!)),\(String(describing: SensorOutputs1[i].gyroZ!)),\(String(describing: SensorOutputs1[i].accX!)),\(String(describing: SensorOutputs1[i].accY!)),\(String(describing: SensorOutputs1[i].accZ!)),\(String(describing: SensorOutputs1[i].magX!)),\(String(describing: SensorOutputs1[i].magY!)),\(String(describing: SensorOutputs1[i].magZ!)),"
+                        
+                        sensorsInfo1 = "\(df.string(from: SensorOutputs1[i].timeStamp! as Date)),\(String(describing: SensorOutputs1[i].timeStamp!.timeIntervalSince1970)),\(String(describing: SensorOutputs1[i].gyroX!)),\(String(describing: SensorOutputs1[i].gyroY!)),\(String(describing: SensorOutputs1[i].gyroZ!)),\(String(describing: SensorOutputs1[i].accX!)),\(String(describing: SensorOutputs1[i].accY!)),\(String(describing: SensorOutputs1[i].accZ!)),\(String(describing: SensorOutputs1[i].magX!)),\(String(describing: SensorOutputs1[i].magY!)),\(String(describing: SensorOutputs1[i].magZ!)),"
                     }
                     
                     if i < SensorOutputs2.count {
-                        sensorsInfo2 = "\(String(describing: SensorOutputs2[i].timeStamp!)),\(String(describing: SensorOutputs2[i].gyroX!)),\(String(describing: SensorOutputs2[i].gyroY!)),\(String(describing: SensorOutputs2[i].gyroZ!)),\(String(describing: SensorOutputs2[i].accX!)),\(String(describing: SensorOutputs2[i].accY!)),\(String(describing: SensorOutputs2[i].accZ!)),\(String(describing: SensorOutputs2[i].magX!)),\(String(describing: SensorOutputs2[i].magY!)),\(String(describing: SensorOutputs2[i].magZ!)),"
+                        sensorsInfo2 = "\(df.string(from: SensorOutputs2[i].timeStamp! as Date)),\(String(describing: SensorOutputs2[i].timeStamp!.timeIntervalSince1970)),\(String(describing: SensorOutputs2[i].gyroX!)),\(String(describing: SensorOutputs2[i].gyroY!)),\(String(describing: SensorOutputs2[i].gyroZ!)),\(String(describing: SensorOutputs2[i].accX!)),\(String(describing: SensorOutputs2[i].accY!)),\(String(describing: SensorOutputs2[i].accZ!)),\(String(describing: SensorOutputs2[i].magX!)),\(String(describing: SensorOutputs2[i].magY!)),\(String(describing: SensorOutputs2[i].magZ!)),"
                     }
                     
                     if i < SensorOutputs3.count {
-                        sensorsInfo3 = "\(String(describing: SensorOutputs3[i].timeStamp!)),\(String(describing: SensorOutputs3[i].gyroX!)),\(String(describing: SensorOutputs3[i].gyroY!)),\(String(describing: SensorOutputs3[i].gyroZ!)),\(String(describing: SensorOutputs3[i].accX!)),\(String(describing: SensorOutputs3[i].accY!)),\(String(describing: SensorOutputs3[i].accZ!)),\(String(describing: SensorOutputs3[i].magX!)),\(String(describing: SensorOutputs3[i].magY!)),\(String(describing: SensorOutputs3[i].magZ!)),"
+                        sensorsInfo3 = "\(df.string(from: SensorOutputs3[i].timeStamp! as Date)),\(String(describing: SensorOutputs3[i].timeStamp!.timeIntervalSince1970)),\(String(describing: SensorOutputs3[i].gyroX!)),\(String(describing: SensorOutputs3[i].gyroY!)),\(String(describing: SensorOutputs3[i].gyroZ!)),\(String(describing: SensorOutputs3[i].accX!)),\(String(describing: SensorOutputs3[i].accY!)),\(String(describing: SensorOutputs3[i].accZ!)),\(String(describing: SensorOutputs3[i].magX!)),\(String(describing: SensorOutputs3[i].magY!)),\(String(describing: SensorOutputs3[i].magZ!)),"
                     }
                     
-                    let nilString = "0,0,0,0,0,0,0,0,0,0,"
+                    let nilString = ",,,,,,,,,,"
                     
                     if sensorsInfo1 == "" {
                         sensorsInfo1 = nilString
