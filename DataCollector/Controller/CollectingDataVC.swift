@@ -11,7 +11,9 @@ import CoreBluetooth
 import CoreData
 
 
-class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, ClassSettingsTableVCDelegate  {
+class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, SettingsTableVCDelegate, RecordIDVCDelegate {
+ 
+    
     
 
     // Settings view controller
@@ -70,7 +72,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
     // Changing variable
     var currentNumberOfSensors: Int = 0
     var currentPeriod: UInt8 = 0
-    var isWalking: Int = 0
+    var recordID: Int = 0
     
     // Define our scanning interval times
     var keepScanning = false
@@ -114,6 +116,14 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
             
             settingsTableVC.delegate = self
             self.settingsTableVC = segue.destination as? SettingsTableVC
+        }
+        
+        if let recordIDVC = destination as? RecordIDVC {
+            recordIDVC.delegate = self
+            
+            if let recordID = sender as? Int {
+                recordIDVC.selectedID = recordID
+            }
         }
     }
     
@@ -610,18 +620,15 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         }
     }
     
-    
-    func isWalkingChangedValueSettingsDelegate(_ value: Bool){
-        if value {
-            isWalking = 1
-        }
-        else {
-            isWalking = 0
-        }
+    func recordIDChangedNumberSettingsDelegate(_ number: Int){
+        recordID = number
+        settingsTableVC?.recordIDLabel.text = "\(number)"
     }
     
+    func changeIDPressed() {
+         performSegue(withIdentifier: "toRecordIDSettings", sender: recordID)
+    }
     
-
     
     
     
@@ -641,7 +648,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         currentSession?.date = NSDate()
         currentSession?.period =  Float (currentPeriod) / 100
         currentSession?.sensorsAmount = Int32(currentNumberOfSensors)
-        currentSession?.isWalking = Int32(isWalking)
+        currentSession?.isWalking = Int32(recordID)
     }
     
     
@@ -741,7 +748,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         stopButton.isHidden = false
         startButton.isEnabled = true
         stopButton.isEnabled = false
-        settingsTableVC?.isWalkingSwitch.isEnabled = true
+        settingsTableVC?.tableView.allowsSelection = true
         
         settingsTableVC?.sensorsStatusLabel.text = "Ready to record"
         settingsTableVC?.sensorsStatusImage.image = #imageLiteral(resourceName: "ok")
@@ -757,7 +764,7 @@ class CollectingDataVC: UIViewController, CBCentralManagerDelegate, CBPeripheral
         settingsTableVC?.currentRecordNumberLabel.text = "\(nextSessionid)"
         startButton.isEnabled = false
         stopButton.isEnabled = true
-        settingsTableVC?.isWalkingSwitch.isEnabled = false
+        settingsTableVC?.tableView.allowsSelection = false
         settingsTableVC?.recordNumberLabel.text = "Record number:"
         
         settingsTableVC?.sensorsStatusLabel.text = "Recording..."

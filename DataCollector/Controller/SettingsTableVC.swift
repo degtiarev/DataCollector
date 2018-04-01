@@ -9,10 +9,10 @@
 import UIKit
 
 
-protocol ClassSettingsTableVCDelegate: class {
+protocol SettingsTableVCDelegate: class {
     func sensorsChangedNumberSettingsDelegate(_ number: Int)
     func periodChangedNumberSettingsDelegate(_ number: UInt8)
-    func isWalkingChangedValueSettingsDelegate(_ value: Bool)
+    func changeIDPressed()
 }
 
 
@@ -28,10 +28,10 @@ class SettingsTableVC: UITableViewController {
     @IBOutlet weak var sensorsStatusImage: UIImageView!
     @IBOutlet weak var recordNumberLabel: UILabel!
     @IBOutlet weak var currentRecordNumberLabel: UILabel!
-    @IBOutlet weak var isWalkingSwitch: UISwitch!
+    @IBOutlet weak var recordIDLabel: UILabel!
     
     
-    weak var delegate: ClassSettingsTableVCDelegate?
+    weak var delegate: SettingsTableVCDelegate?
     
     
     override func viewDidLoad() {
@@ -40,7 +40,6 @@ class SettingsTableVC: UITableViewController {
         // Update start current value
         sensorsChangedNumber(numberOfSensorsSlider)
         periodChangedNumber(periodSlider)
-        isWalkingChangedValue(isWalkingSwitch)
     }
     
     
@@ -65,8 +64,11 @@ class SettingsTableVC: UITableViewController {
     }
     
     
-    @IBAction func isWalkingChangedValue(_ sender: UISwitch) {
-        delegate?.isWalkingChangedValueSettingsDelegate(sender.isOn)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if indexPath.section == 0 && indexPath.row == 2 {
+            delegate?.changeIDPressed()
+        }
     }
     
 }

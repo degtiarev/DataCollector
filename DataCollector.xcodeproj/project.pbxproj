@@ -9,7 +9,9 @@
 /* Begin PBXBuildFile section */
 		DC119ECE204ABFA00035ED8F /* SensorOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC119ECD204ABFA00035ED8F /* SensorOutput.swift */; };
 		DC23343E204386E900232A8A /* DataCollector.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DC23343C204386E900232A8A /* DataCollector.xcdatamodeld */; };
-		DC972306204150C0002047EF /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC972305204150C0002047EF /* ItemCell.swift */; };
+		DC8B3DF5206F76DA008AF66D /* RecordIDVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8B3DF4206F76DA008AF66D /* RecordIDVC.swift */; };
+		DC8B3DF72070ADF6008AF66D /* SessionIDCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8B3DF62070ADF6008AF66D /* SessionIDCell.swift */; };
+		DC972306204150C0002047EF /* ItemSessionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC972305204150C0002047EF /* ItemSessionCell.swift */; };
 		DCA52D7F2046A7F00011AA74 /* RoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA52D7E2046A7F00011AA74 /* RoundButton.swift */; };
 		DCB7BBF1203A5688001F1E9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BBF0203A5688001F1E9F /* AppDelegate.swift */; };
 		DCB7BBF3203A5688001F1E9F /* CollectingDataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB7BBF2203A5688001F1E9F /* CollectingDataVC.swift */; };
@@ -34,7 +36,9 @@
 /* Begin PBXFileReference section */
 		DC119ECD204ABFA00035ED8F /* SensorOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorOutput.swift; sourceTree = "<group>"; };
 		DC23343D204386E900232A8A /* DataCollector.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataCollector.xcdatamodel; sourceTree = "<group>"; };
-		DC972305204150C0002047EF /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
+		DC8B3DF4206F76DA008AF66D /* RecordIDVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordIDVC.swift; sourceTree = "<group>"; };
+		DC8B3DF62070ADF6008AF66D /* SessionIDCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionIDCell.swift; sourceTree = "<group>"; };
+		DC972305204150C0002047EF /* ItemSessionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSessionCell.swift; sourceTree = "<group>"; };
 		DCA52D7E2046A7F00011AA74 /* RoundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundButton.swift; sourceTree = "<group>"; };
 		DCB7BBED203A5688001F1E9F /* DataCollector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataCollector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCB7BBF0203A5688001F1E9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -127,8 +131,9 @@
 		DCB7BC06203A5839001F1E9F /* View */ = {
 			isa = PBXGroup;
 			children = (
-				DC972305204150C0002047EF /* ItemCell.swift */,
 				DCA52D7E2046A7F00011AA74 /* RoundButton.swift */,
+				DC972305204150C0002047EF /* ItemSessionCell.swift */,
+				DC8B3DF62070ADF6008AF66D /* SessionIDCell.swift */,
 				DCB7BBF4203A5688001F1E9F /* Main.storyboard */,
 				DCB7BBFC203A5688001F1E9F /* LaunchScreen.storyboard */,
 			);
@@ -140,6 +145,7 @@
 			children = (
 				DCB7BBF2203A5688001F1E9F /* CollectingDataVC.swift */,
 				DCF103ED2046BB17005B63C5 /* SettingsTableVC.swift */,
+				DC8B3DF4206F76DA008AF66D /* RecordIDVC.swift */,
 				DCB7BC0B203A6321001F1E9F /* ExportDataVC.swift */,
 				DCB7BBF0203A5688001F1E9F /* AppDelegate.swift */,
 			);
@@ -229,12 +235,13 @@
 			files = (
 				DCB7BC0C203A6321001F1E9F /* ExportDataVC.swift in Sources */,
 				DCE3EFF52048F78900B8527C /* SensorData+CoreDataProperties.swift in Sources */,
-				DC972306204150C0002047EF /* ItemCell.swift in Sources */,
+				DC972306204150C0002047EF /* ItemSessionCell.swift in Sources */,
 				DCE3EFF22048F78900B8527C /* Session+CoreDataClass.swift in Sources */,
 				DCF103EE2046BB17005B63C5 /* SettingsTableVC.swift in Sources */,
 				DC119ECE204ABFA00035ED8F /* SensorOutput.swift in Sources */,
 				DC23343E204386E900232A8A /* DataCollector.xcdatamodeld in Sources */,
 				DCE3EFFA2048F78900B8527C /* Characteristic+CoreDataClass.swift in Sources */,
+				DC8B3DF72070ADF6008AF66D /* SessionIDCell.swift in Sources */,
 				DCE3EFF62048F78900B8527C /* Sensor+CoreDataClass.swift in Sources */,
 				DCB7BBF3203A5688001F1E9F /* CollectingDataVC.swift in Sources */,
 				DCB7BBF1203A5688001F1E9F /* AppDelegate.swift in Sources */,
@@ -243,6 +250,7 @@
 				DCE3EFFB2048F78900B8527C /* Characteristic+CoreDataProperties.swift in Sources */,
 				DCE3EFF92048F78900B8527C /* CharacteristicName+CoreDataProperties.swift in Sources */,
 				DCE3EFF32048F78900B8527C /* Session+CoreDataProperties.swift in Sources */,
+				DC8B3DF5206F76DA008AF66D /* RecordIDVC.swift in Sources */,
 				DCE3EFF72048F78900B8527C /* Sensor+CoreDataProperties.swift in Sources */,
 				DCA52D7F2046A7F00011AA74 /* RoundButton.swift in Sources */,
 				DCE3EFF42048F78900B8527C /* SensorData+CoreDataClass.swift in Sources */,

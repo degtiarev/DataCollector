@@ -1,5 +1,5 @@
 //
-//  ItemCell.swift
+//  ItemSessionCell.swift
 //  DataCollector
 //
 //  Created by Aleksei Degtiarev on 24/02/2018.
@@ -8,8 +8,8 @@
 
 import UIKit
 
-class ItemCell: UITableViewCell {
-
+class ItemSessionCell: UITableViewCell {
+    
     @IBOutlet weak var idSessionLabel: UILabel!
     @IBOutlet weak var dateSessionLabel: UILabel!
     @IBOutlet weak var durationLabel: UILabel!
@@ -24,7 +24,7 @@ class ItemCell: UITableViewCell {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy  HH:mm:ss"
         let myString = formatter.string(from: session.date! as Date)
-       
+        
         
         idSessionLabel.text = "\(session.id)"
         dateSessionLabel.text = myString
@@ -35,6 +35,4 @@ class ItemCell: UITableViewCell {
     }
     
     
-    @IBAction func deletePressedButton(_ sender: Any) {
-    }
 }

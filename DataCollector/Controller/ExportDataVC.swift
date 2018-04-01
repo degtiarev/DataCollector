@@ -28,12 +28,12 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell", for: indexPath) as! ItemCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell", for: indexPath) as! ItemSessionCell
         configureCell(cell: cell, indexPath: indexPath as NSIndexPath)
         return cell
     }
     
-    func configureCell(cell: ItemCell, indexPath: NSIndexPath) {
+    func configureCell(cell: ItemSessionCell, indexPath: NSIndexPath) {
         
         let session = controller.object(at: indexPath as IndexPath)
         cell.configureCell(session: session)
@@ -113,7 +113,7 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
             
         case.update:
             if let indexPath = indexPath {
-                let cell = tableView.cellForRow(at: indexPath) as! ItemCell
+                let cell = tableView.cellForRow(at: indexPath) as! ItemSessionCell
                 configureCell(cell: cell, indexPath: indexPath as NSIndexPath)
             }
             break
@@ -175,7 +175,7 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         
         let fileName = "Sessions.csv"
         let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-        var csvText = "SessionID,SessionDate,SessionDuration,SessionPeriod,AmountOfSensors,IsWalking,Timestamp1,timeIntervalSince1970_1,GyroX1,GyroY1,GyroZ1,AccX1,AccY1,AccZ1,MagX1,MagY1,MagZ1,Timestamp2,timeIntervalSince1970_2,GyroX2,GyroY2,GyroZ2,AccX2,AccY2,AccZ2,MagX2,MagY2,MagZ2,Timestamp3,timeIntervalSince1970_3,GyroX3,GyroY3,GyroZ3,AccX3,AccY3,AccZ3,MagX3,MagY3,MagZ3\n"
+        var csvText = "SessionID,SessionDate,SessionDuration,SessionPeriod,AmountOfSensors,RecordID,Timestamp1,timeIntervalSince1970_1,GyroX1,GyroY1,GyroZ1,AccX1,AccY1,AccZ1,MagX1,MagY1,MagZ1,Timestamp2,timeIntervalSince1970_2,GyroX2,GyroY2,GyroZ2,AccX2,AccY2,AccZ2,MagX2,MagY2,MagZ2,Timestamp3,timeIntervalSince1970_3,GyroX3,GyroY3,GyroZ3,AccX3,AccY3,AccZ3,MagX3,MagY3,MagZ3\n"
         
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS"
