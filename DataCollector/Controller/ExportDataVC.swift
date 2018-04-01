@@ -172,8 +172,14 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     }
     
     @IBAction func exportPressed(_ sender: Any) {
+        FileManager.default.clearTmpDirectory()
         
-        let fileName = "Sessions.csv"
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        let sessionDate = formatter.string(from: date)
+        
+        let fileName = "Data-sessions_\(sessionDate).csv"
         let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
         var csvText = "SessionID,SessionDate,SessionDuration,SessionPeriod,AmountOfSensors,RecordID,Timestamp1,timeIntervalSince1970_1,GyroX1,GyroY1,GyroZ1,AccX1,AccY1,AccZ1,MagX1,MagY1,MagZ1,Timestamp2,timeIntervalSince1970_2,GyroX2,GyroY2,GyroZ2,AccX2,AccY2,AccZ2,MagX2,MagY2,MagZ2,Timestamp3,timeIntervalSince1970_3,GyroX3,GyroY3,GyroZ3,AccX3,AccY3,AccZ3,MagX3,MagY3,MagZ3\n"
         
@@ -280,7 +286,7 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         }
         
         
-        if let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("Sessions.csv") as URL? {
+        if let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName) as URL? {
             let objectsToShare = [fileURL]
             let activityController = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
             let excludedActivities = [UIActivityType.postToFlickr, UIActivityType.postToWeibo, UIActivityType.message, UIActivityType.mail, UIActivityType.print, UIActivityType.copyToPasteboard, UIActivityType.assignToContact, UIActivityType.saveToCameraRoll, UIActivityType.addToReadingList, UIActivityType.postToFlickr, UIActivityType.postToVimeo, UIActivityType.postToTencentWeibo]
@@ -323,4 +329,20 @@ class ExportDataVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     }
     
     
+}
+
+
+
+extension FileManager {
+    func clearTmpDirectory() {
+        do {
+            let tmpDirectory = try contentsOfDirectory(atPath: NSTemporaryDirectory())
+            try tmpDirectory.forEach {[unowned self] file in
+                let path = String.init(format: "%@%@", NSTemporaryDirectory(), file)
+                try self.removeItem(atPath: path)
+            }
+        } catch {
+            print(error)
+        }
+    }
 }
