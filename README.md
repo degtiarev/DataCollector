@@ -9,8 +9,11 @@ red and green.
 </p>
 
 This needs to know from which exactly sensor the app records data and to juxtapose in future that information
-with data in *.csv-file. It is also possible to adjust period and choose type of record. After recording, 
-all the sessions could be exported into *.csv-file.
+with data in *.csv-file. It is also possible to adjust period and choose type of record. 
+
+Each session could be marked by record id to distinguish what type of session recorded. For example, to mark running session as record id = 0 and walking session as record id = 1. 
+
+After recording all the sessions could be exported into *.csv-file.
 
 # Screenshots
 
